@@ -1,26 +1,227 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@custom-variant dark (&:is(.dark *));
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-heading: var(--font-geist-sans);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+
+  /* Bento extended tokens — defined as var() refs so they follow the active
+     light/dark theme (see :root and .dark below). The brand mapping is Base's
+     palette; values stay locked to the exact swatches in the brief. */
+  --color-background-card: var(--background-card);
+  --color-background-muted: var(--background-muted);
+  --color-foreground-muted: var(--foreground-muted);
+  --color-foreground-subtle: var(--foreground-subtle);
+  --color-border-strong: var(--border-strong);
+
+  /* Derived interaction surfaces — computed from the active theme so they flip
+     automatically (no new brand swatches are introduced). */
+  --color-primary-hover: color-mix(in oklch, var(--primary) 82%, white);
+  --color-primary-soft: color-mix(in srgb, var(--primary) 12%, var(--background));
+  --color-accent-hover: color-mix(in oklch, var(--accent) 85%, black);
+  --color-accent-soft: color-mix(in srgb, var(--accent) 14%, var(--background));
+  --color-border-soft: color-mix(in srgb, var(--border) 55%, var(--background));
+  /* "mint" token repurposed: Base has no mint — the date pill is now a soft
+     blue tint (light) / subtle blue-on-dark, with primary text for readability. */
+  --color-mint: color-mix(in srgb, var(--accent) 12%, var(--background));
+  --color-mint-text: var(--foreground);
+
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+:root {
+  /* ───────────────────────────────────────────────────────────────────────
+     Base brand palette — LIGHT theme.
+     Token values are locked to the exact Base swatches; do not interpolate
+     new shades. Gray references in comments are Base's gray ramp.
+     ─────────────────────────────────────────────────────────────────────── */
+  --background: #ffffff; /* Gray 0 — page background */
+  --foreground: #0a0b0d; /* Gray 100 — text primary */
+  --card: #ffffff; /* Gray 0 — cards */
+  --card-foreground: #0a0b0d;
+  --popover: #ffffff;
+  --popover-foreground: #0a0b0d;
+  --primary: #0000ff; /* Base Blue — primary / action fills */
+  --primary-foreground: #ffffff; /* text on primary */
+  --secondary: #eef0f3; /* Gray 10 — subtle card alt */
+  --secondary-foreground: #0a0b0d;
+  --muted: #eef0f3; /* Gray 10 */
+  --muted-foreground: #717886; /* Gray 50 — text secondary */
+  --accent: #3c8aff; /* Cerulean — supporting accent */
+  --accent-foreground: #0a0b0d; /* dark text on cerulean (AA) */
+  --destructive: #fc401f; /* Red — danger */
+  --border: #dee1e7; /* Gray 15 — border */
+  --input: #dee1e7;
+  --ring: #0000ff; /* Base Blue — focus ring (light) */
+  --chart-1: oklch(0.87 0 0);
+  --chart-2: oklch(0.556 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.371 0 0);
+  --chart-5: oklch(0.269 0 0);
+  --radius: 0.625rem;
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
+
+  /* Bento extended — LIGHT */
+  --background-card: #ffffff; /* Gray 0 */
+  --background-muted: #eef0f3; /* Gray 10 */
+  --foreground-muted: #717886; /* Gray 50 — text secondary */
+  --foreground-subtle: #5b616e; /* Gray 60 — text tertiary */
+  --border-strong: #b1b7c3; /* Gray 30 — stronger border */
+}
+
+.dark {
+  /* ───────────────────────────────────────────────────────────────────────
+     Base brand palette — DARK theme.
+     Primary fills stay Base Blue with white text; blue *text / links /
+     outlines* switch to Cerulean (pure Base Blue fails contrast on dark).
+     Status colors (green/yellow/red) are bright enough to stay as-is.
+     ─────────────────────────────────────────────────────────────────────── */
+  --background: #0a0b0d; /* Gray 100 — page background */
+  --foreground: #ffffff; /* text primary */
+  --card: #32353d; /* Gray 80 — cards */
+  --card-foreground: #ffffff;
+  --popover: #32353d;
+  --popover-foreground: #ffffff;
+  --primary: #0000ff; /* Base Blue — primary fills stay */
+  --primary-foreground: #ffffff;
+  --secondary: #32353d; /* Gray 80 */
+  --secondary-foreground: #ffffff;
+  --muted: #32353d;
+  --muted-foreground: #b1b7c3; /* Gray 30 — text secondary */
+  --accent: #3c8aff; /* Cerulean — blue text/links/outlines on dark */
+  --accent-foreground: #0a0b0d;
+  --destructive: #fc401f; /* Red — danger (unchanged) */
+  --border: #5b616e; /* Gray 60 — border */
+  --input: #5b616e;
+  --ring: #3c8aff; /* Cerulean — focus ring (dark) */
+  --chart-1: oklch(0.87 0 0);
+  --chart-2: oklch(0.556 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.371 0 0);
+  --chart-5: oklch(0.269 0 0);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.556 0 0);
+
+  /* Bento extended — DARK */
+  --background-card: #32353d; /* Gray 80 */
+  --background-muted: #32353d; /* Gray 80 */
+  --foreground-muted: #b1b7c3; /* Gray 30 — text secondary */
+  --foreground-subtle: #b1b7c3; /* Gray 30 — keep readable on Gray 80 (AA) */
+  --border-strong: #717886; /* Gray 50 — stronger border */
+}
+
+/* Bento-specific design tokens (extend, not override, the shadcn base above).
+   These generate utilities like bg-background-card, text-foreground-muted,
+   rounded-card, shadow-card, text-display, etc. Status + decorative swatches
+   below are theme-invariant — locked to Base's exact values. */
+@theme {
+  /* Status (bright in both themes) */
+  --color-success: #66c800; /* Green — complete / on-track */
+  --color-success-soft: #b6f569; /* Lime */
+  --color-warning: #ffd12f; /* Yellow — due soon */
+  --color-danger: #fc401f; /* Red — danger */
+
+  /* Decorative — use rarely */
+  --color-tan: #b8a581;
+  --color-pink: #fea8cd;
+
+  /* Radii */
+  --radius-card: 20px;
+  --radius-btn: 12px;
+  --radius-pill: 999px;
+
+  /* Shadows */
+  --shadow-card: 0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px 0 rgba(0, 0, 0, 0.02);
+  --shadow-card-hover: 0 4px 12px 0 rgba(0, 0, 0, 0.06);
+
+  /* Typography scale */
+  --text-display: 2.25rem;
+  --text-display--line-height: 1.1;
+  --text-display--letter-spacing: -0.02em;
+  --text-display--font-weight: 700;
+
+  --text-h1: 1.75rem;
+  --text-h1--line-height: 1.2;
+  --text-h1--letter-spacing: -0.01em;
+  --text-h1--font-weight: 700;
+
+  --text-h2: 1.25rem;
+  --text-h2--line-height: 1.3;
+  --text-h2--font-weight: 600;
+
+  --text-h3: 1rem;
+  --text-h3--line-height: 1.4;
+  --text-h3--font-weight: 600;
+
+  --text-body: 0.9375rem;
+  --text-body--line-height: 1.5;
+
+  --text-caption: 0.8125rem;
+  --text-caption--line-height: 1.4;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
   }
-}
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
+  }
 }
