@@ -1,13 +1,13 @@
 // Deployed contract addresses for Mi Tanda, keyed by chain.
 //
 // Source of truth:
-//   - Arbitrum Sepolia (421614): mitanda-contracts/deployments/421614.json  ← ACTIVE
-//   - Base Sepolia    (84532):  mitanda-contracts/deployments/84532.json
+//   - Arbitrum One    (42161):  mitanda-contracts/deployments/arbitrum-one-mainnet.md  ← ACTIVE (live)
+//   - Arbitrum Sepolia (421614): mitanda-contracts/deployments/421614.json  (testnet)
+//   - Base Sepolia    (84532):  mitanda-contracts/deployments/84532.json     (testnet)
 // These are public addresses (not secrets), so they're committed as literals.
-// The Base Sepolia entry can be overridden via NEXT_PUBLIC_* env vars (see
-// .env.local). Arbitrum Sepolia uses its own NEXT_PUBLIC_ARB_* overrides so a
-// stale Base override can't hijack the active chain.
-import { arbitrumSepolia, baseSepolia } from "viem/chains";
+// Each chain has its own NEXT_PUBLIC_* override prefix so a stale override for
+// one chain can't hijack the active chain.
+import { arbitrum, arbitrumSepolia, baseSepolia } from "viem/chains";
 
 type Hex = `0x${string}`;
 
@@ -17,7 +17,41 @@ const env = (key: string, fallback: Hex): Hex => {
 };
 
 export const addresses = {
-  // ── Arbitrum Sepolia (active) ─────────────────────────────────────────────
+  // ── Arbitrum One (ACTIVE — mainnet, live) ─────────────────────────────────
+  // v4 audit-hardened deploy (see mitanda-contracts/deployments/arbitrum-one-mainnet.md).
+  [arbitrum.id]: {
+    manager: env(
+      "NEXT_PUBLIC_ARB_ONE_MANAGER_ADDRESS",
+      "0xa88aB3B81D9cA6BB556104B72e73b722D3abE678",
+    ),
+    tandaImpl: env(
+      "NEXT_PUBLIC_ARB_ONE_TANDA_IMPL_ADDRESS",
+      "0xD55c72B7fF4777D382Bd69b9B27Cc1da799d119d",
+    ),
+    passNft: env(
+      "NEXT_PUBLIC_ARB_ONE_PASS_NFT_ADDRESS",
+      "0x52ff9dBb6124E3EBCEbA75A875A43d1752c0F277",
+    ),
+    receiptNft: env(
+      "NEXT_PUBLIC_ARB_ONE_RECEIPT_NFT_ADDRESS",
+      "0x00e904e04156d13Eb35D8404053e2eDE02aDAB96",
+    ),
+    completionNft: env(
+      "NEXT_PUBLIC_ARB_ONE_COMPLETION_NFT_ADDRESS",
+      "0x1CB29BCb3Dc1bF7B4A7083F779c488BF4a55573d",
+    ),
+    // Circle USDC on Arbitrum One.
+    usdc: env(
+      "NEXT_PUBLIC_ARB_ONE_USDC_ADDRESS",
+      "0xaf88d065e77c8cC2239327C5EDb3A432268e5831",
+    ),
+    // MXNB on Arbitrum One.
+    mxnb: env(
+      "NEXT_PUBLIC_ARB_ONE_MXNB_ADDRESS",
+      "0xF197FFC28c23E0309B5559e7a166f2c6164C80aA",
+    ) as Hex | undefined,
+  },
+  // ── Arbitrum Sepolia (testnet) ────────────────────────────────────────────
   // v4 redeploy (audit hardening: NFT mints use _mint — no onERC721Received
   // callback in join/payout/completion; markDefaulter is nonReentrant).
   [arbitrumSepolia.id]: {
@@ -92,7 +126,7 @@ export const addresses = {
 } as const;
 
 /** The chain the app reads/writes against. Switch this to repoint the app. */
-export const activeChain = arbitrumSepolia;
+export const activeChain = arbitrum;
 export const DEFAULT_CHAIN_ID = activeChain.id;
 
 export type MitandaAddresses = (typeof addresses)[typeof DEFAULT_CHAIN_ID];

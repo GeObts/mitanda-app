@@ -8,6 +8,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { http } from "wagmi";
 import type { Chain } from "viem";
 import {
+  arbitrum as arbitrumOneBase,
   arbitrumSepolia as arbitrumSepoliaBase,
   baseSepolia,
 } from "viem/chains";
@@ -22,6 +23,12 @@ const ARB_SEPOLIA_RPC =
   process.env.NEXT_PUBLIC_ARB_SEPOLIA_RPC_URL || // legacy name, kept for compat
   "https://arbitrum-sepolia-rpc.publicnode.com";
 
+// Arbitrum One (mainnet) RPC — the app is LIVE here. Override with
+// NEXT_PUBLIC_ARBITRUM_RPC_URL (e.g. a dedicated Alchemy endpoint) for
+// production multicall load; the public node is fine for light use.
+const ARB_ONE_RPC =
+  process.env.NEXT_PUBLIC_ARBITRUM_RPC_URL || "https://arb1.arbitrum.io/rpc";
+
 // Override the chain's default rpcUrls so BOTH wagmi (reads/writes) AND Privy's
 // embedded-wallet provider talk to the reliable endpoint — Privy derives its RPC
 // from the chain object, so setting the wagmi transport alone isn't enough.
@@ -31,6 +38,15 @@ const arbitrumSepolia: Chain = {
     ...arbitrumSepoliaBase.rpcUrls,
     default: { http: [ARB_SEPOLIA_RPC] },
     public: { http: [ARB_SEPOLIA_RPC] },
+  },
+};
+
+const arbitrumOne: Chain = {
+  ...arbitrumOneBase,
+  rpcUrls: {
+    ...arbitrumOneBase.rpcUrls,
+    default: { http: [ARB_ONE_RPC] },
+    public: { http: [ARB_ONE_RPC] },
   },
 };
 
@@ -45,9 +61,11 @@ const arbitrumSepolia: Chain = {
 // auth — which would flip the dashboard "connected" even though the user never
 // signed in through Privy. The dashboard must reflect Privy sign-in only.
 export const wagmiConfig = createConfig({
-  chains: [arbitrumSepolia, baseSepolia],
+  // Active chain (Arbitrum One) is listed first; testnets kept as secondaries.
+  chains: [arbitrumOne, arbitrumSepolia, baseSepolia],
   multiInjectedProviderDiscovery: false,
   transports: {
+    [arbitrumOne.id]: http(ARB_ONE_RPC),
     [arbitrumSepolia.id]: http(ARB_SEPOLIA_RPC),
     [baseSepolia.id]: http(
       process.env.NEXT_PUBLIC_BASE_SEPOLIA_RPC_URL || "https://sepolia.base.org",
@@ -91,8 +109,8 @@ export function Providers({ children }: { children: React.ReactNode }) {
       <PrivyProvider
         appId={appId}
         config={{
-          defaultChain: arbitrumSepolia,
-          supportedChains: [arbitrumSepolia, baseSepolia],
+          defaultChain: arbitrumOne,
+          supportedChains: [arbitrumOne, arbitrumSepolia, baseSepolia],
           embeddedWallets: {
             ethereum: { createOnLogin: "users-without-wallets" },
           },
