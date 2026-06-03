@@ -1,36 +1,49 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Mi Tanda — App
 
-## Getting Started
+The web app for **Mi Tanda**, an on-chain ROSCA (rotating savings club) that brings Latin
+America's *tanda* savings tradition on-chain with built-in defaulter insurance, automatic NFT
+receipts, and rotating artist/sponsor collections.
 
-First, run the development server:
+> **Smart contracts live in a separate repo:** [**GeObts/mitanda-contracts**](https://github.com/GeObts/mitanda-contracts).
+> This repo is the frontend that drives them. The two together are the full project.
+
+## What it does
+
+A complete tanda runs end-to-end from the dashboard — no block-explorer calls needed:
+
+- **Create / Join / Pay** — start a savings circle, join by ID, pay one or more cycles ahead.
+- **Claim** — one-tap `withdraw()` of accrued pull-payments (cycle payouts, the organizer fee,
+  insurance refunds).
+- **Release** — once a cycle's payout time passes, the recipient gets a "Release & claim"
+  (settles the cycle and pulls the funds in one flow); any participant gets a permissionless
+  "Release this cycle's payout" fallback.
+- **Defaulter handling** — when a member hasn't paid a due cycle, the payout stays blocked;
+  within grace it's informational, and past grace a permissionless "Mark as defaulter" slashes
+  their insurance to cover the gap and unblocks the payout — framed as protecting the honest
+  members.
+- **Invites, soulbound membership/completion NFTs, and transferable payout receipts.**
+
+Every read is pinned to the active chain; all payout/default logic is derived from on-chain
+state (`getPayoutOrder`, `getAllParticipants`, `gracePeriod`). Pull-payment throughout.
+
+## Proof of testing
+
+[`e2e-evidence/`](./e2e-evidence) holds screenshots from driving the **real UI** against the
+live v4 contracts on an Arbitrum Sepolia fork — the **full lifecycle** (create → join → VRF →
+3 cycles → completion + insurance refunds), the **release flow**, and a complete **default +
+insurance payout**, each cross-checked against on-chain state.
+
+## Stack
+
+Next.js 16 (App Router) · wagmi v3 · viem · Privy (auth) · TanStack Query · Tailwind ·
+Arbitrum Sepolia. Deployed contract addresses live in [`lib/contracts/addresses.ts`](./lib/contracts/addresses.ts).
+
+## Getting started
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+cp .env.example .env.local   # add NEXT_PUBLIC_PRIVY_APP_ID + RPC overrides (no secrets committed)
+npm run dev                  # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Regenerate ABIs from the contracts repo with `node scripts/gen-abis.mjs`.
