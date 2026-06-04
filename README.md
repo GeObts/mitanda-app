@@ -7,6 +7,8 @@ receipts, and rotating artist/sponsor collections.
 > **Smart contracts live in a separate repo:** [**GeObts/mitanda-contracts**](https://github.com/GeObts/mitanda-contracts).
 > This repo is the frontend that drives them. The two together are the full project.
 
+📄 **Product Requirements Document:** [`docs/PRD.md`](./docs/PRD.md) — vision, market, personas, full feature spec, business model, go-to-market, and roadmap (PMF score 8.2/10).
+
 ## What it does
 
 A complete tanda runs end-to-end from the dashboard — no block-explorer calls needed:
