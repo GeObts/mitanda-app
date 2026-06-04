@@ -585,7 +585,19 @@ function FinalCta() {
           <p className="mx-auto mt-4 max-w-md text-pretty text-xl text-white/80">
             {t("land.finalBody")}
           </p>
-          <div className="mt-9 flex justify-center">
+
+          {/* Creator reward — the 3% referral incentive (organizer fee). */}
+          <div className="mx-auto mt-7 flex max-w-xl items-start gap-3 rounded-2xl border border-white/25 bg-white/10 px-5 py-4 text-left backdrop-blur">
+            <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-white/15 text-white shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25)]">
+              <Coins className="size-5" />
+            </span>
+            <p className="text-pretty text-base text-white/85">
+              <span className="font-semibold text-white">{t("land.finalRewardLabel")}: </span>
+              {t("land.finalReward")}
+            </p>
+          </div>
+
+          <div className="mt-8 flex justify-center">
             <a
               href="/dashboard"
               className="group inline-flex items-center justify-center gap-2 rounded-full bg-white px-8 py-4 text-lg font-semibold text-[#0000ff] shadow-[0_16px_40px_-12px_rgba(0,0,0,0.4)] transition-all hover:-translate-y-0.5"

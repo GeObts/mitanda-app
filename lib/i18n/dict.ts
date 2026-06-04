@@ -668,6 +668,11 @@ export const dict = {
     es: "Crea o únete a una tanda en minutos. La tradición sigue igual; la confianza ahora viene integrada.",
     en: "Start or join a tanda in minutes. The tradition stays the same; the trust is now built in.",
   },
+  "land.finalRewardLabel": { es: "Recompensa para creadores", en: "Creator reward" },
+  "land.finalReward": {
+    es: "Crea una tanda y gana el 3% de cada pago — tu recompensa por iniciar el círculo e invitar a tu gente.",
+    en: "Create a tanda and earn 3% of every payout — your reward for starting the circle and bringing your people in.",
+  },
   "land.launchApp": { es: "Abrir app", en: "Launch app" },
 
   // footer
