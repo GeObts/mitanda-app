@@ -447,11 +447,11 @@ export const dict = {
   "land.navWho": { es: "Para quién es", en: "Who it's for" },
 
   // hero
-  "land.heroTitle1": { es: "El círculo de ahorro de toda la vida,", en: "The savings circle you've grown up with," },
-  "land.heroTitle2": { es: "nuevo y mejorado.", en: "new and Improved." },
+  "land.heroTitle1": { es: "La tanda de toda la vida,", en: "The Tanda you've grown up with," },
+  "land.heroTitle2": { es: "nueva y mejorada.", en: "new and Improved." },
   "land.heroSubhead": {
-    es: "Ahorra junto a personas en quienes confías. Cada ronda todos aportan, y cada ronda una persona se lleva el bote completo — guardado y pagado de forma segura, automáticamente.",
-    en: "Save together with people you trust. Everyone chips in each round, and each round one person takes home the whole pot — held and paid out safely, automatically.",
+    es: "Ahorra junto a tu grupo en privado, o únete a una tanda pública. Cada ronda todos aportan, y cada ronda una persona se lleva el bote completo — pagado de forma segura y protegida, automáticamente.",
+    en: "Save together in a private group, or join a public tanda. Everyone chips in each round, and each round one person takes home the whole pot — paid out safe, secure, automatically.",
   },
   "land.ctaStart": { es: "Inicia una tanda", en: "Start a tanda" },
   "land.ctaJoin": { es: "Únete a un círculo", en: "Join a circle" },
@@ -614,6 +614,11 @@ export const dict = {
     es: "Termina una tanda y gana una insignia que construye tu reputación de ahorro con el tiempo.",
     en: "Finish a tanda and earn a badge that builds your savings reputation over time.",
   },
+  "land.featB7t": { es: "Todo desde tu teléfono", en: "All from your phone" },
+  "land.featB7b": {
+    es: "Se acabaron las vueltas cada semana y sacar tiempo de tu día solo para pagar. Aporta y cobra desde tu teléfono, en la comodidad de tu casa — y sin andar cargando un fajo de efectivo.",
+    en: "No more weekly trips across town or carving time out of a busy week just to pay. Contribute and collect right from your phone, in the comfort of home — and no walking around with a big chunk of cash.",
+  },
 
   // built for real money
   "land.moneyEyebrow": { es: "Hecho para dinero real", en: "Built for real money" },
@@ -644,21 +649,26 @@ export const dict = {
   },
 
   // who it's for
-  "land.whoTitle": { es: "Hecho para círculos de personas que confían entre sí", en: "Made for circles of people who trust each other" },
+  "land.whoTitle": { es: "Para quién es", en: "Who it's for" },
   "land.whoBody": {
-    es: "Si alguna vez has estado en una tanda o cundina, ya sabes cómo funciona. Si no, es la forma más fácil de ahorrar con personas en quienes confías.",
-    en: "If you've ever been in a tanda or cundina, you already know how this works. If you haven't, it's the easiest way to save with people you trust.",
+    es: "La tanda es para todos. Júntense para alcanzar sus metas. Ya sean un puñado de amigos cercanos o toda una comunidad, MiTanda funciona para cualquier grupo listo para ahorrar junto, con confianza.",
+    en: "The Tanda is for everyone. Pool together to reach your goals. Whether it's a handful of close friends or a whole community, Mi Tanda works for any group ready to save together with confidence.",
   },
-  "land.whoChip1": { es: "Familia y amigos", en: "Family and friends" },
-  "land.whoChip2": { es: "Compañeros y vecinos", en: "Coworkers and neighbors" },
-  "land.whoChip3": { es: "Primerizos, bienvenidos", en: "First-timers welcome" },
+  "land.whoChip1": { es: "Amigos", en: "Friends" },
+  "land.whoChip2": { es: "Familia", en: "Family" },
+  "land.whoChip3": { es: "Compañeros", en: "Coworkers" },
+  "land.whoChip4": { es: "Comunidades", en: "Communities" },
 
   // final CTA
-  "land.finalTitle": { es: "Comienza tu primera tanda hoy", en: "Start your first tanda today" },
-  "land.finalBody": {
-    es: "Reúne a tu círculo, define el monto y deja que todos ahorren juntos — de forma segura.",
-    en: "Gather your circle, set your amount, and let everyone save together — safely.",
+  "land.finalTitle": {
+    es: "Ahorren juntos, como siempre lo han hecho — sin la preocupación",
+    en: "Save together, the way you always have — without the worry",
   },
+  "land.finalBody": {
+    es: "Crea o únete a una tanda en minutos. La tradición sigue igual; la confianza ahora viene integrada.",
+    en: "Start or join a tanda in minutes. The tradition stays the same; the trust is now built in.",
+  },
+  "land.launchApp": { es: "Abrir app", en: "Launch app" },
 
   // footer
   "land.footFaq": { es: "Preguntas", en: "FAQ" },

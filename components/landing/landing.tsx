@@ -20,6 +20,7 @@ import {
   Award,
   Zap,
   BadgeCheck,
+  Smartphone,
   ArrowRight,
   Check,
 } from "lucide-react";
@@ -496,14 +497,16 @@ function CurrencyCard({
 function Features() {
   const t = useT();
   // Bento layout on md+ (6-col grid): a wide box pairs with a narrow one, the
-  // pattern mirrors on the next row, and the last two split the row evenly.
+  // pattern mirrors on the next row, and the final three split the last row
+  // evenly (4+2, 2+4, 2+2+2).
   const boxes = [
     { icon: <Share2 className="size-7" />, title: t("land.featB1t"), body: t("land.featB1b"), span: "md:col-span-4" },
     { icon: <ShieldCheck className="size-7" />, title: t("land.featB2t"), body: t("land.featB2b"), span: "md:col-span-2" },
     { icon: <BadgePercent className="size-7" />, title: t("land.featB3t"), body: t("land.featB3b"), span: "md:col-span-2" },
     { icon: <Mail className="size-7" />, title: t("land.featB4t"), body: t("land.featB4b"), span: "md:col-span-4" },
-    { icon: <ReceiptText className="size-7" />, title: t("land.featB5t"), body: t("land.featB5b"), span: "md:col-span-3" },
-    { icon: <Award className="size-7" />, title: t("land.featB6t"), body: t("land.featB6b"), span: "md:col-span-3" },
+    { icon: <Smartphone className="size-7" />, title: t("land.featB7t"), body: t("land.featB7b"), span: "md:col-span-2" },
+    { icon: <ReceiptText className="size-7" />, title: t("land.featB5t"), body: t("land.featB5b"), span: "md:col-span-2" },
+    { icon: <Award className="size-7" />, title: t("land.featB6t"), body: t("land.featB6b"), span: "md:col-span-2" },
   ];
   return (
     <Section id="features">
@@ -532,7 +535,7 @@ function Features() {
 
 function WhoItsFor() {
   const t = useT();
-  const chips = [t("land.whoChip1"), t("land.whoChip2"), t("land.whoChip3")];
+  const chips = [t("land.whoChip1"), t("land.whoChip2"), t("land.whoChip3"), t("land.whoChip4")];
   return (
     <section id="who-its-for" className="px-5 py-16 sm:px-8 sm:py-24">
       <div className="mx-auto max-w-4xl">
@@ -590,7 +593,7 @@ function FinalCta() {
               href="/dashboard"
               className="group inline-flex items-center justify-center gap-2 rounded-full bg-white px-8 py-4 text-lg font-semibold text-[#0000ff] shadow-[0_16px_40px_-12px_rgba(0,0,0,0.4)] transition-all hover:-translate-y-0.5"
             >
-              {t("land.ctaStart")}
+              {t("land.launchApp")}
               <ArrowRight className="size-5 transition-transform group-hover:translate-x-0.5" />
             </a>
           </div>
