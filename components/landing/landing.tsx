@@ -261,44 +261,41 @@ function WhySafe() {
     { icon: <Eye className="size-7" />, title: t("land.safeC3t"), body: t("land.safeC3b") },
   ];
   return (
-    <section id="why-safe" className="px-5 py-16 sm:px-8 sm:py-24">
-      <div
-        style={{
-          backgroundImage:
-            "linear-gradient(135deg, rgba(10,26,255,0.9), rgba(0,0,255,0.92), rgba(28,77,255,0.9))",
-        }}
-        className="relative mx-auto max-w-6xl overflow-hidden rounded-[2.5rem] border border-white/20 px-6 py-14 shadow-[0_22px_64px_-34px_rgba(0,0,255,0.42)] backdrop-blur-xl sm:px-12"
-      >
-        <RotatingArrows className="pointer-events-none absolute -right-16 -top-16 size-72 text-white/[0.07]" />
-        <RotatingArrows className="pointer-events-none absolute -bottom-20 -left-16 size-72 text-white/[0.07]" />
+    <section id="why-safe" className="px-5 pb-16 pt-2 sm:px-8 sm:pb-24 sm:pt-4">
+      <div className="mx-auto max-w-6xl">
+        {/* Compact heading band — short and pulled up toward the section above. */}
+        <div
+          style={{
+            backgroundImage:
+              "linear-gradient(135deg, rgba(10,26,255,0.9), rgba(0,0,255,0.92), rgba(28,77,255,0.9))",
+          }}
+          className="relative overflow-hidden rounded-[2rem] border border-white/20 px-6 py-7 text-center shadow-[0_22px_64px_-34px_rgba(0,0,255,0.42)] backdrop-blur-xl sm:px-12 sm:py-9"
+        >
+          <RotatingArrows className="pointer-events-none absolute -right-12 -top-12 size-48 text-white/[0.07]" />
+          <RotatingArrows className="pointer-events-none absolute -bottom-14 -left-12 size-48 text-white/[0.07]" />
 
-        <div className="relative mx-auto max-w-2xl text-center">
-          <span className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-4 py-1.5 text-sm font-semibold text-white backdrop-blur">
-            <ShieldCheck className="size-4" />
-            {t("land.navSafe")}
-          </span>
-          <h2 className="mt-5 text-balance text-[2.25rem] font-bold leading-[1.1] tracking-tight text-white sm:text-[2.85rem]">
-            {t("land.safeTitle")}
-          </h2>
-          <p className="mx-auto mt-4 max-w-xl text-pretty text-lg text-white/75">
-            {t("land.safeSubtitle")}
-          </p>
+          <div className="relative mx-auto max-w-2xl">
+            <span className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-4 py-1.5 text-sm font-semibold text-white backdrop-blur">
+              <ShieldCheck className="size-4" />
+              {t("land.navSafe")}
+            </span>
+            <h2 className="mt-4 text-balance text-[1.6rem] font-bold leading-[1.12] tracking-tight text-white sm:text-[2.1rem]">
+              {t("land.safeTitle")}
+            </h2>
+            <p className="mx-auto mt-3 max-w-xl text-pretty text-base text-white/75">
+              {t("land.safeSubtitle")}
+            </p>
+          </div>
         </div>
 
-        <div className="relative mt-14 grid gap-6 md:grid-cols-3">
+        {/* Three separate, smaller cards below the heading band. */}
+        <div className="mt-6 grid gap-6 md:grid-cols-3">
           {cards.map((c) => (
-            <div
-              key={c.title}
-              className="rounded-[26px] border border-white/15 bg-white/[0.08] p-7 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.12)] backdrop-blur-xl transition-transform duration-300 hover:-translate-y-1"
-            >
-              <div className="flex size-14 items-center justify-center rounded-2xl bg-white/15 text-white shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25)]">
-                {c.icon}
-              </div>
-              <h3 className="mt-6 text-2xl font-semibold tracking-tight text-white">
-                {c.title}
-              </h3>
-              <p className="mt-2.5 text-lg text-white/75">{c.body}</p>
-            </div>
+            <GlowCard key={c.title}>
+              <GradientIcon>{c.icon}</GradientIcon>
+              <h3 className="mt-6 text-xl font-semibold tracking-tight">{c.title}</h3>
+              <p className="mt-2.5 text-base text-foreground-muted">{c.body}</p>
+            </GlowCard>
           ))}
         </div>
       </div>
