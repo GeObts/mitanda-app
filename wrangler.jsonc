@@ -12,10 +12,20 @@
     "directory": ".open-next/assets",
     "binding": "ASSETS"
   },
+  // Native D1 binding — the app reads it as env.DB via OpenNext's
+  // getCloudflareContext(). database_id is an identifier (not a secret); it is
+  // useless without account access, so Cloudflare commits it in config by
+  // design. Using the binding means NO CLOUDFLARE_API_TOKEN is needed at all.
+  // database_id is filled in after `wrangler d1 create mitanda-db`.
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "mitanda-db",
+      "database_id": "13921cb3-b1b9-4d29-90ab-652aca5df860"
+    }
+  ],
   // PUBLIC env only. NEXT_PUBLIC_PRIVY_APP_ID is a public client identifier
   // (already shipped in the browser bundle), safe to commit.
-  // SECRETS (CLOUDFLARE_ACCOUNT_ID / CLOUDFLARE_API_TOKEN /
-  // CLOUDFLARE_D1_DATABASE_ID) are set in the Cloudflare dashboard — NEVER here.
   "vars": {
     "NEXT_PUBLIC_PRIVY_APP_ID": "cmpoddngc004e0bjutoaor7t4"
   }
