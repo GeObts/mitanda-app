@@ -34,7 +34,7 @@ export interface PayTarget {
 }
 
 /**
- * "Pay / Contribuir" control. The contract's `makePayment` is
+ * "Make a payment" control. The contract's `makePayment` is
  * `onlyInState(ACTIVE)`, so while the tanda is still OPEN (not yet full/started)
  * we never offer a payment the contract would reject — the control is disabled
  * with a plain-language explanation instead.
@@ -50,7 +50,7 @@ export function PayTandaButton({ tanda }: { tanda: PayTarget }) {
           disabled
           className="flex w-full cursor-not-allowed items-center justify-center gap-2 rounded-btn border border-border bg-background-muted px-5 py-3 text-h3 text-foreground-subtle"
         >
-          <Clock className="size-4" /> Pagar / Contribuir
+          <Clock className="size-4" /> Make a payment
         </button>
         <p className="flex items-center justify-center gap-1.5 text-caption text-foreground-muted">
           Payments open once your tanda fills and starts.
@@ -66,7 +66,7 @@ export function PayTandaButton({ tanda }: { tanda: PayTarget }) {
         onClick={() => setOpen(true)}
         className="flex w-full items-center justify-center gap-2 rounded-btn border border-primary bg-transparent px-5 py-3 text-h3 text-primary transition-colors hover:bg-primary/5 dark:border-accent dark:text-accent dark:hover:bg-accent/10"
       >
-        Pagar / Contribuir
+        Make a payment
       </button>
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="max-w-md">

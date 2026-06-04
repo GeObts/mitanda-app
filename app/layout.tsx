@@ -5,8 +5,9 @@ import "./globals.css";
 import { Providers } from "./providers";
 
 export const metadata: Metadata = {
-  title: "Mi Tanda",
-  description: "Save together. Rotating savings circles on Base.",
+  title: "MiTanda — The tanda you trust, now protected by code",
+  description:
+    "Save together with people you trust. Everyone chips in each round, and each round one member receives the whole pot — held and paid out safely by code. Works with digital pesos (MXNB) and dollars (USDC).",
 };
 
 export default function RootLayout({

@@ -225,3 +225,56 @@
     @apply font-sans;
   }
 }
+
+/* ───────────────────────────────────────────────────────────────────────
+   Landing page motion — gentle drifting clouds + a soft glow pulse. Plain
+   CSS (not @layer-scoped) so the keyframes are always available. All motion
+   is disabled under prefers-reduced-motion for accessibility.
+   ─────────────────────────────────────────────────────────────────────── */
+@keyframes mt-drift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(2.5rem, -1rem, 0);
+  }
+}
+@keyframes mt-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-1.1rem);
+  }
+}
+@keyframes mt-glow {
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 0.85;
+  }
+}
+.mt-drift {
+  animation: mt-drift 22s ease-in-out infinite;
+}
+.mt-drift-slow {
+  animation: mt-drift 34s ease-in-out infinite;
+}
+.mt-float {
+  animation: mt-float 7s ease-in-out infinite;
+}
+.mt-glow {
+  animation: mt-glow 6s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .mt-drift,
+  .mt-drift-slow,
+  .mt-float,
+  .mt-glow {
+    animation: none;
+  }
+}

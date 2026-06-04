@@ -310,7 +310,7 @@ function SuccessCard({ hash }: { hash?: `0x${string}` }) {
         </a>
       )}
       <a
-        href="/"
+        href="/dashboard"
         className="mt-4 flex w-full items-center justify-center rounded-btn bg-primary px-5 py-3 text-h3 text-primary-foreground transition-colors hover:bg-primary-hover"
       >
         Go to dashboard

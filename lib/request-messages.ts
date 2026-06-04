@@ -24,3 +24,20 @@ export function manageMessage(tanda: `0x${string}`): string {
     `Tanda: ${tanda.toLowerCase()}`,
   ].join("\n");
 }
+
+/**
+ * A wallet owner proves ownership to set their own profile photo, binding the
+ * exact image via its SHA-256 so a captured signature can't be replayed to set
+ * a different image. Client (signs) and server (recovers) MUST build this
+ * byte-identically.
+ */
+export function avatarMessage(
+  address: `0x${string}`,
+  photoHash: string,
+): string {
+  return [
+    "Mi Tanda — set profile photo",
+    `Wallet: ${address.toLowerCase()}`,
+    `Photo: ${photoHash}`,
+  ].join("\n");
+}

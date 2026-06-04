@@ -84,7 +84,7 @@ const INTERVAL_PRESETS = [
   { label: "Monthly", days: "30" },
 ];
 
-/** "Crear Tanda" button that opens the create-tanda modal. */
+/** "Create tanda" button that opens the create-tanda modal. */
 export function CreateTandaButton() {
   const [open, setOpen] = useState(false);
   const [joinTarget, setJoinTarget] = useState<{
@@ -103,10 +103,10 @@ export function CreateTandaButton() {
         icon={<Plus className="size-5" />}
         onClick={() => setOpen(true)}
       >
-        Crear Tanda
+        Create tanda
       </ActionButton>
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-lg">
           <CreateTandaContent
             key={open ? "open" : "closed"}
             onDone={() => setOpen(false)}

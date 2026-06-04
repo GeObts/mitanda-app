@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { usePrivy } from "@privy-io/react-auth";
 import { useAccount } from "wagmi";
-import { LogOut, Wallet, ChevronDown } from "lucide-react";
+import { LogOut, Wallet, ChevronDown, Copy, Check } from "lucide-react";
 
 import { usePrivyConfigured } from "@/app/providers";
 
@@ -18,6 +18,7 @@ function PrivyConnect() {
   const { ready, authenticated, login, logout } = usePrivy();
   const { address } = useAccount();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [copied, setCopied] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -30,6 +31,17 @@ function PrivyConnect() {
     document.addEventListener("mousedown", onDown);
     return () => document.removeEventListener("mousedown", onDown);
   }, [menuOpen]);
+
+  async function copyAddress() {
+    if (!address) return;
+    try {
+      await navigator.clipboard.writeText(address);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    } catch {
+      // clipboard blocked — no-op
+    }
+  }
 
   if (!ready) {
     return (
@@ -74,7 +86,7 @@ function PrivyConnect() {
       {menuOpen && (
         <div
           role="menu"
-          className="absolute right-0 top-11 z-50 w-52 rounded-btn border border-border bg-background-card p-1 shadow-card-hover"
+          className="absolute right-0 top-11 z-50 w-56 rounded-btn border border-border bg-background-card p-1 shadow-card-hover"
         >
           {address && (
             <div className="px-2 py-1.5">
@@ -89,11 +101,29 @@ function PrivyConnect() {
           <button
             type="button"
             role="menuitem"
+            onClick={copyAddress}
+            className="flex w-full items-center gap-2 rounded-[10px] px-2 py-2 text-caption font-medium text-foreground transition-colors hover:bg-background-muted"
+          >
+            {copied ? (
+              <>
+                <Check className="size-3.5 text-success" />
+                <span className="text-success">Copied!</span>
+              </>
+            ) : (
+              <>
+                <Copy className="size-3.5 text-foreground-muted" />
+                Copy address
+              </>
+            )}
+          </button>
+          <button
+            type="button"
+            role="menuitem"
             onClick={() => {
               setMenuOpen(false);
               logout();
             }}
-            className="mt-0.5 flex w-full items-center gap-2 rounded-[10px] px-2 py-2 text-caption font-medium text-danger transition-colors hover:bg-background-muted"
+            className="flex w-full items-center gap-2 rounded-[10px] px-2 py-2 text-caption font-medium text-danger transition-colors hover:bg-background-muted"
           >
             <LogOut className="size-3.5" />
             Disconnect

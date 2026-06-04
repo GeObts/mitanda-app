@@ -1,6 +1,6 @@
-import { Dashboard } from "@/components/dashboard";
+import { Landing } from "@/components/landing/landing";
 
-// Mi Tanda dashboard — wired to the live Base Sepolia contracts (reads only).
+// Public promo / landing page. The app itself lives at /dashboard.
 export default function Page() {
-  return <Dashboard />;
+  return <Landing />;
 }

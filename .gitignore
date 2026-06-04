@@ -24,8 +24,14 @@
 .DS_Store
 *.pem
 
-# local dev request store (Cloudflare D1 fallback)
+# local dev stores (Cloudflare D1 fallback)
 .dev-requests.json
+.dev-avatars.json
+
+# scratch screenshots / headless-chrome profiles
+.shot*
+.shotchrome/
+_shot-*.png
 
 # debug
 npm-debug.log*

@@ -181,7 +181,7 @@ function Body({ tandaId }: { tandaId: bigint }) {
             payments and progress on your dashboard.
           </p>
           <a
-            href="/"
+            href="/dashboard"
             className="mt-1 flex w-full items-center justify-center rounded-btn bg-primary px-5 py-3 text-h3 text-primary-foreground transition-colors hover:bg-primary-hover"
           >
             Go to dashboard
@@ -326,7 +326,7 @@ function CreatorView({
               </button>
             )}
             <a
-              href="/"
+              href="/dashboard"
               className="flex w-full items-center justify-center rounded-btn border border-border px-5 py-2.5 text-caption font-medium text-foreground-muted transition-colors hover:bg-background-muted"
             >
               Go to dashboard
@@ -487,7 +487,7 @@ function PublicJoin({
         <div className="flex flex-col items-center gap-2 py-4 text-center">
           <CheckCircle2 className="size-8 text-success" />
           <h2 className="text-h3">You&apos;re in!</h2>
-          <a href="/" className="text-caption text-accent underline">
+          <a href="/dashboard" className="text-caption text-accent underline">
             Go to dashboard
           </a>
         </div>

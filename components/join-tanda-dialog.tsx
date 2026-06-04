@@ -47,13 +47,13 @@ interface JoinDialogProps {
   presetId?: bigint;
 }
 
-/** Dashboard "Unirme a Tanda" — opens the join-by-ID dialog. */
+/** Dashboard "Join a tanda" — opens the join-by-ID dialog. */
 export function JoinTandaButton() {
   const [open, setOpen] = useState(false);
   return (
     <>
       <ActionButton variant="secondary" onClick={() => setOpen(true)}>
-        Unirme a Tanda
+        Join a tanda
       </ActionButton>
       <JoinTandaDialog open={open} onOpenChange={setOpen} />
     </>
@@ -68,7 +68,7 @@ export function JoinTandaDialog({
 }: JoinDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md">
+      <DialogContent className="max-w-lg">
         <JoinContent
           key={open ? "open" : "closed"}
           presetAddress={presetAddress}
