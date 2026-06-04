@@ -48,6 +48,12 @@ dev.log
 # vercel
 .vercel
 
+# cloudflare / opennext (build output + local dev state; never commit .dev.vars — secrets)
+.open-next/
+.wrangler/
+.dev.vars
+cloudflare-env.d.ts
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

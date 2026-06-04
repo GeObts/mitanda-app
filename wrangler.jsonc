@@ -1,0 +1,22 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "mitanda",
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2025-03-25",
+  // nodejs_compat: required by OpenNext (Node APIs in the Worker).
+  // global_fetch_strictly_public: required so the Worker's server-side fetches
+  // to same-account Cloudflare endpoints (our D1 REST calls to api.cloudflare.com)
+  // route over the public internet instead of being intercepted internally.
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  },
+  // PUBLIC env only. NEXT_PUBLIC_PRIVY_APP_ID is a public client identifier
+  // (already shipped in the browser bundle), safe to commit.
+  // SECRETS (CLOUDFLARE_ACCOUNT_ID / CLOUDFLARE_API_TOKEN /
+  // CLOUDFLARE_D1_DATABASE_ID) are set in the Cloudflare dashboard — NEVER here.
+  "vars": {
+    "NEXT_PUBLIC_PRIVY_APP_ID": "cmpoddngc004e0bjutoaor7t4"
+  }
+}
