@@ -619,6 +619,11 @@ export const dict = {
     es: "Se acabaron las vueltas cada semana y sacar tiempo de tu día solo para pagar. Aporta y cobra desde tu teléfono, en la comodidad de tu casa — y sin andar cargando un fajo de efectivo.",
     en: "No more weekly trips across town or carving time out of a busy week just to pay. Contribute and collect right from your phone, in the comfort of home — and no walking around with a big chunk of cash.",
   },
+  "land.featB8t": { es: "Gana el 3% como creador", en: "Earn 3% as a creator" },
+  "land.featB8b": {
+    es: "Crea una tanda y gana el 3% de cada pago — una recompensa por reunir a tu círculo y hacerlo crecer.",
+    en: "Create a tanda and earn 3% of every payout — a reward for bringing your circle together and growing it.",
+  },
 
   // built for real money
   "land.moneyEyebrow": { es: "Hecho para dinero real", en: "Built for real money" },
