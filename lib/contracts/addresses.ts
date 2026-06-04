@@ -58,30 +58,30 @@ export const addresses = {
     ) as Hex | undefined,
   },
   // ── Base mainnet (8453) — the Base App build (NEXT_PUBLIC_ACTIVE_CHAIN=base) ─
-  // Fill these in from mitanda-contracts/deployments/base-mainnet.md. Until set,
-  // they fall back to the zero address (reads return empty, writes are disabled)
-  // so the build never breaks — but the Base App build is non-functional until
-  // the five MiTanda addresses below are provided (literal or NEXT_PUBLIC_BASE_*).
+  // v4 audit-hardened deploy (2026-06-03, commit d17e039). Literals are the
+  // documented source of truth from mitanda-contracts/deployments/base-mainnet.md
+  // (cross-checked against deployments/8453.json). Each can still be overridden
+  // per-chain via the NEXT_PUBLIC_BASE_* env vars.
   [base.id]: {
     manager: env(
       "NEXT_PUBLIC_BASE_MANAGER_ADDRESS",
-      "0x0000000000000000000000000000000000000000",
+      "0x74b6Fc121A40C1A3282af6Bd78074AC3C2a32814",
     ),
     tandaImpl: env(
       "NEXT_PUBLIC_BASE_TANDA_IMPL_ADDRESS",
-      "0x0000000000000000000000000000000000000000",
+      "0x7Ee43871c368901652F9b15A2ed28603Bc7A0bB9",
     ),
     passNft: env(
       "NEXT_PUBLIC_BASE_PASS_NFT_ADDRESS",
-      "0x0000000000000000000000000000000000000000",
+      "0xe9A5c185F5ab2A9434a880C92DB8A51014C75e5f",
     ),
     receiptNft: env(
       "NEXT_PUBLIC_BASE_RECEIPT_NFT_ADDRESS",
-      "0x0000000000000000000000000000000000000000",
+      "0x0dDb8bC0bD88d7933Dc4B54618768156a3558443",
     ),
     completionNft: env(
       "NEXT_PUBLIC_BASE_COMPLETION_NFT_ADDRESS",
-      "0x0000000000000000000000000000000000000000",
+      "0xCF006fe8E86E7Fd92A7fD2f9E0A64dc4761AfAB3",
     ),
     // Circle-native USDC on Base mainnet (well-known; override only if needed).
     usdc: env(
