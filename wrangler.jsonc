@@ -1,6 +1,6 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "mitanda",
+  "name": "mitanda-app",
   "main": ".open-next/worker.js",
   "compatibility_date": "2025-03-25",
   // nodejs_compat: required by OpenNext (Node APIs in the Worker).
