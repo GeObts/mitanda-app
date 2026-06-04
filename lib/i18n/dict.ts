@@ -523,6 +523,60 @@ export const dict = {
     en: "Every contribution and every payout is publicly verifiable — anyone in your circle can check, anytime.",
   },
 
+  // the trust problem, solved
+  "land.tsEyebrow": { es: "Confianza sin el riesgo", en: "Trust without the risk" },
+  "land.tsTitle": { es: "El problema de confianza, por fin resuelto", en: "The trust problem, finally solved" },
+  "land.tsSubtitle": {
+    es: "Las tandas siempre han funcionado con confianza — y a veces esa confianza se rompe. Mi Tanda conserva todo lo que amas de la tradición y elimina el único riesgo real.",
+    en: "Tandas have always run on trust — and sometimes that trust gets broken. Mi Tanda keeps everything you love about the tradition and removes the one real risk.",
+  },
+  "land.tsFearLabel": { es: "El miedo", en: "The fear" },
+  "land.tsFearQuote": {
+    es: "«¿Y si el organizador desaparece con el dinero?»",
+    en: "“What if the organizer disappears with the money?”",
+  },
+  "land.tsFearBody": {
+    es: "Con Mi Tanda, no pueden. No hay un organizador que guarde los fondos — lo hace el contrato inteligente, y solo puede seguir las reglas que todos acordaron. Hacer trampa es simplemente imposible.",
+    en: "With Mi Tanda, they can't. There's no organizer holding the funds — the smart contract does, and it can only follow the rules everyone agreed to. It's simply impossible to cheat.",
+  },
+  "land.tsC1t": { es: "Nadie puede huir con el bote", en: "No one can run off with the pot" },
+  "land.tsC1b": {
+    es: "El contrato inteligente guarda y mueve el dinero con reglas fijas. No hay una wallet de organizador que vaciar — el código, no una persona, controla el pago.",
+    en: "The smart contract holds and moves the money by fixed rules. There is no organizer wallet to drain — the code, not a person, controls the payout.",
+  },
+  "land.tsC2t": { es: "Transparente y verificable", en: "Transparent and verifiable" },
+  "land.tsC2b": {
+    es: "Cada aportación y cada pago queda registrado on-chain. Cualquiera en el círculo puede comprobar que se siguen las reglas.",
+    en: "Every contribution and payout is recorded on-chain. Anyone in the circle can check that the rules are being followed.",
+  },
+  "land.tsC3t": { es: "Tú mantienes el control de tus fondos", en: "You keep control of your funds" },
+  "land.tsC3b": {
+    es: "Tu dinero se queda bajo las reglas del contrato, no en la cuenta bancaria ni el bolsillo de alguien más.",
+    en: "Your money stays in the rules of the contract, not in someone else's bank account or pocket.",
+  },
+  "land.tsC4t": { es: "Construido en Base, en USDC", en: "Built on Base, in USDC" },
+  "land.tsC4b": {
+    es: "Funciona en Base, la red de Ethereum de bajo costo de Coinbase, usando USDC — una stablecoin anclada al dólar — para que los montos se mantengan estables.",
+    en: "Runs on Base, Coinbase's low-cost Ethereum network, using USDC — a dollar-pegged stablecoin — so amounts stay steady.",
+  },
+  // built-in insurance
+  "land.insEyebrow": { es: "Seguro integrado", en: "Built-in insurance" },
+  "land.insTitle": { es: "Un regalo esperando en la meta", en: "A gift waiting at the finish line" },
+  "land.insBody": {
+    es: "Cada pago incluye una pequeña aportación de seguro del 10% adicional. Piénsalo como un fondo de ahorro dentro de tu fondo de ahorro — y cuando la tanda se completa, cada miembro recibe de vuelta todas sus aportaciones de seguro. Es una pequeña recompensa por terminar lo que empezaste, y una razón para seguir.",
+    en: "Every payment includes a small 10% insurance contribution on top. Think of it as a savings pot inside your savings pot — and when the tanda completes, every member gets all of their insurance payments back. It's a little reward for finishing what you started, and a reason to keep going.",
+  },
+  "land.insFinishT": { es: "Termina fuerte y recupéralo todo", en: "Finish strong, get it all back" },
+  "land.insFinishB": {
+    es: "Completa la tanda y tu saldo de seguro completo se te devuelve — motivación para quedarte hasta la última ronda.",
+    en: "Complete the tanda and your full insurance balance is returned to you — motivation to stay in until the very last round.",
+  },
+  "land.insDefaultT": { es: "Si abandonas, lo pierdes", en: "Default and you forfeit it" },
+  "land.insDefaultB": {
+    es: "Si un miembro deja de pagar, pierde todo lo que aportó — sus contribuciones y su seguro — así que quienes se quedan están protegidos.",
+    en: "If a member stops paying, they lose everything they've put in — their contributions and their insurance — so the people who stay are protected.",
+  },
+
   // built for real money
   "land.moneyEyebrow": { es: "Hecho para dinero real", en: "Built for real money" },
   "land.moneyTitle": { es: "Dinero real, entra y sale — al instante", en: "Real money, in and out — instantly" },

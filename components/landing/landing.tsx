@@ -5,7 +5,13 @@ import {
   UsersRound,
   Lock,
   ShieldCheck,
+  ShieldAlert,
   Eye,
+  KeyRound,
+  Coins,
+  Gift,
+  Trophy,
+  TriangleAlert,
   Zap,
   BadgeCheck,
   ArrowRight,
@@ -35,6 +41,7 @@ export function Landing() {
       <WhatsATanda />
       <HowItWorks />
       <WhySafe />
+      <TrustSolved />
       <RealMoney />
       <WhoItsFor />
       <FinalCta />
@@ -288,6 +295,114 @@ function WhySafe() {
         </div>
       </div>
     </section>
+  );
+}
+
+/* ─────────────────────────────────────── 3b. The trust problem, solved ── */
+
+function TrustSolved() {
+  const t = useT();
+  const cards = [
+    { icon: <Lock className="size-7" />, title: t("land.tsC1t"), body: t("land.tsC1b") },
+    { icon: <Eye className="size-7" />, title: t("land.tsC2t"), body: t("land.tsC2b") },
+    { icon: <KeyRound className="size-7" />, title: t("land.tsC3t"), body: t("land.tsC3b") },
+    { icon: <Coins className="size-7" />, title: t("land.tsC4t"), body: t("land.tsC4b") },
+  ];
+  return (
+    <Section id="trust-solved">
+      <SectionHeading
+        eyebrow={t("land.tsEyebrow")}
+        eyebrowIcon={<ShieldCheck className="size-4" />}
+        title={t("land.tsTitle")}
+        subtitle={t("land.tsSubtitle")}
+      />
+
+      {/* The fear — its own prominent blue card. */}
+      <div
+        style={{
+          backgroundImage:
+            "linear-gradient(135deg, rgba(10,26,255,0.95), rgba(0,0,255,0.96), rgba(28,77,255,0.95))",
+        }}
+        className="relative mx-auto mt-12 max-w-3xl overflow-hidden rounded-[2rem] border border-white/20 px-7 py-10 shadow-[0_22px_64px_-34px_rgba(0,0,255,0.42)] backdrop-blur-xl sm:px-10"
+      >
+        <RotatingArrows className="pointer-events-none absolute -right-12 -top-12 size-56 text-white/[0.07]" />
+        <div className="relative">
+          <span className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-4 py-1.5 text-sm font-semibold text-white backdrop-blur">
+            <ShieldAlert className="size-4" />
+            {t("land.tsFearLabel")}
+          </span>
+          <p className="mt-5 text-balance text-2xl font-bold leading-snug tracking-tight text-white sm:text-3xl">
+            {t("land.tsFearQuote")}
+          </p>
+          <p className="mt-4 text-pretty text-lg text-white/80">{t("land.tsFearBody")}</p>
+        </div>
+      </div>
+
+      {/* Four guarantees, each its own card. */}
+      <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        {cards.map((c) => (
+          <GlowCard key={c.title}>
+            <GradientIcon>{c.icon}</GradientIcon>
+            <h3 className="mt-6 text-xl font-semibold tracking-tight">{c.title}</h3>
+            <p className="mt-2.5 text-base text-foreground-muted">{c.body}</p>
+          </GlowCard>
+        ))}
+      </div>
+
+      {/* Built-in insurance — its own card. */}
+      <div className="mt-8">
+        <GlowCard glow="accent" hover={false} className="px-7 py-10 sm:px-10">
+          <div className="flex flex-col gap-8 lg:flex-row lg:items-start lg:gap-12">
+            <div className="lg:max-w-md">
+              <Eyebrow>
+                <Gift className="size-4" />
+                {t("land.insEyebrow")}
+              </Eyebrow>
+              <h3 className="mt-5 text-balance text-2xl font-bold tracking-tight sm:text-[1.85rem]">
+                {t("land.insTitle")}
+              </h3>
+              <p className="mt-3 text-pretty text-base text-foreground-muted">
+                {t("land.insBody")}
+              </p>
+            </div>
+            <div className="grid flex-1 gap-5 sm:grid-cols-2 lg:grid-cols-1">
+              <InsurancePoint
+                icon={<Trophy className="size-5" />}
+                title={t("land.insFinishT")}
+                body={t("land.insFinishB")}
+              />
+              <InsurancePoint
+                icon={<TriangleAlert className="size-5" />}
+                title={t("land.insDefaultT")}
+                body={t("land.insDefaultB")}
+              />
+            </div>
+          </div>
+        </GlowCard>
+      </div>
+    </Section>
+  );
+}
+
+function InsurancePoint({
+  icon,
+  title,
+  body,
+}: {
+  icon: ReactNode;
+  title: string;
+  body: string;
+}) {
+  return (
+    <div className="rounded-2xl border border-white/60 bg-white/50 p-5 backdrop-blur-xl dark:border-white/10 dark:bg-white/[0.04]">
+      <div className="flex items-center gap-3">
+        <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#0000ff] to-[#3c8aff] text-white shadow-[0_8px_18px_-8px_rgba(0,0,255,0.55)]">
+          {icon}
+        </span>
+        <h4 className="text-base font-semibold tracking-tight">{title}</h4>
+      </div>
+      <p className="mt-2.5 text-sm text-foreground-muted">{body}</p>
+    </div>
   );
 }
 
