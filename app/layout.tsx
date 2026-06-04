@@ -27,11 +27,11 @@ function embedTags(): Record<string, string> {
     version: "1",
     imageUrl: `${APP_URL}${OG_IMAGE}`,
     button: {
-      title: "Open Mi Tanda",
+      title: "Open MiTanda",
       action: {
         type: "launch_miniapp",
         url: APP_URL,
-        name: "Mi Tanda",
+        name: "MiTanda",
         splashImageUrl: `${APP_URL}${SPLASH_IMAGE}`,
         splashBackgroundColor: "#0000ff",
       },
@@ -48,8 +48,8 @@ export const metadata: Metadata = {
     type: "website",
     title: TITLE,
     description: DESCRIPTION,
-    siteName: "Mi Tanda",
-    images: [{ url: OG_IMAGE, width: 512, height: 512, alt: "Mi Tanda" }],
+    siteName: "MiTanda",
+    images: [{ url: OG_IMAGE, width: 512, height: 512, alt: "MiTanda" }],
   },
   twitter: {
     card: "summary_large_image",

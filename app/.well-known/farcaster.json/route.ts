@@ -23,7 +23,7 @@ export function GET(req: Request): Response {
   const manifest: Record<string, unknown> = {
     miniapp: {
       version: "1",
-      name: "Mi Tanda",
+      name: "MiTanda",
       subtitle: "Rotating savings, protected by code",
       description:
         "Save together with people you trust. Everyone chips in each round, " +

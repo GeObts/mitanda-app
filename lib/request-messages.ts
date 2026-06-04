@@ -11,7 +11,7 @@ export function ownershipMessage(
   requester: `0x${string}`,
 ): string {
   return [
-    "Mi Tanda — request to join",
+    "MiTanda — request to join",
     `Tanda: ${tanda.toLowerCase()}`,
     `Requester: ${requester.toLowerCase()}`,
   ].join("\n");
@@ -20,7 +20,7 @@ export function ownershipMessage(
 /** A creator proves they're the on-chain creator to manage a tanda's requests. */
 export function manageMessage(tanda: `0x${string}`): string {
   return [
-    "Mi Tanda — manage join requests",
+    "MiTanda — manage join requests",
     `Tanda: ${tanda.toLowerCase()}`,
   ].join("\n");
 }
@@ -37,7 +37,7 @@ export function avatarMessage(
   name: string,
 ): string {
   return [
-    "Mi Tanda — set profile",
+    "MiTanda — set profile",
     `Wallet: ${address.toLowerCase()}`,
     `Photo: ${photoHash}`,
     `Name: ${name}`,

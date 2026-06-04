@@ -447,7 +447,7 @@ export const dict = {
   "land.navWho": { es: "Para quién es", en: "Who it's for" },
 
   // hero
-  "land.heroTitle1": { es: "El círculo de ahorro de toda la vida,", en: "The savings circle you grew up with," },
+  "land.heroTitle1": { es: "El círculo de ahorro de toda la vida,", en: "The savings circle you've grown up with," },
   "land.heroTitle2": { es: "nuevo y mejorado.", en: "new and Improved." },
   "land.heroSubhead": {
     es: "Ahorra junto a personas en quienes confías. Cada ronda todos aportan, y cada ronda una persona se lleva el bote completo — guardado y pagado de forma segura, automáticamente.",
@@ -477,8 +477,8 @@ export const dict = {
   // how it works
   "land.howTitle": { es: "Cuatro pasos simples, de inicio a fin", en: "Four simple steps, start to finish" },
   "land.howSubtitle": {
-    es: "El mismo ritmo de la tanda que ya conoces — con mucha más comodidad y seguridad.",
-    en: "The same rhythm as the tanda you already know — with much more convenience and security.",
+    es: "El mismo ritmo de la tanda que ya conoces — con mayor comodidad y seguridad.",
+    en: "The same rhythm as the tanda you already know — with added convenience and security.",
   },
   "land.howS1t": { es: "Crea o únete a una tanda", en: "Create or join a tanda" },
   "land.howS1b": {
@@ -527,8 +527,8 @@ export const dict = {
   "land.tsEyebrow": { es: "Confianza sin el riesgo", en: "Trust without the risk" },
   "land.tsTitle": { es: "El problema de confianza, por fin resuelto", en: "The trust problem, finally solved" },
   "land.tsSubtitle": {
-    es: "Las tandas siempre han funcionado con confianza — y a veces esa confianza se rompe. Mi Tanda conserva todo lo que amas de la tradición y elimina el único riesgo real.",
-    en: "Tandas have always run on trust — and sometimes that trust gets broken. Mi Tanda keeps everything you love about the tradition and removes the one real risk.",
+    es: "Las tandas siempre han funcionado con confianza — y a veces esa confianza se rompe. MiTanda conserva todo lo que amas de la tradición y elimina el único riesgo real.",
+    en: "Tandas have always run on trust — and sometimes that trust gets broken. MiTanda keeps everything you love about the tradition and removes the one real risk.",
   },
   "land.tsFearLabel": { es: "El miedo", en: "The fear" },
   "land.tsFearQuote": {
@@ -536,8 +536,8 @@ export const dict = {
     en: "“What if the organizer disappears with the money?”",
   },
   "land.tsFearBody": {
-    es: "Con Mi Tanda, no pueden. No hay un organizador que guarde los fondos — lo hace el contrato inteligente, y solo puede seguir las reglas que todos acordaron. Hacer trampa es simplemente imposible.",
-    en: "With Mi Tanda, they can't. There's no organizer holding the funds — the smart contract does, and it can only follow the rules everyone agreed to. It's simply impossible to cheat.",
+    es: "Con MiTanda, no pueden. No hay un organizador que guarde los fondos — lo hace el contrato inteligente, y solo puede seguir las reglas con las que fue programado. Hacer trampa es simplemente imposible.",
+    en: "With MiTanda, they can't. There's no organizer holding the funds — the smart contract does, and it can only follow the rules it has been programmed to. It's simply impossible to cheat.",
   },
   "land.tsC1t": { es: "Nadie puede huir con el bote", en: "No one can run off with the pot" },
   "land.tsC1b": {
@@ -546,18 +546,18 @@ export const dict = {
   },
   "land.tsC2t": { es: "Transparente y verificable", en: "Transparent and verifiable" },
   "land.tsC2b": {
-    es: "Cada aportación y cada pago queda registrado on-chain. Cualquiera en el círculo puede comprobar que se siguen las reglas.",
-    en: "Every contribution and payout is recorded on-chain. Anyone in the circle can check that the rules are being followed.",
+    es: "Cada aportación y cada pago queda registrado onchain. Cualquiera en el círculo puede comprobar que se siguen las reglas.",
+    en: "Every contribution and payout is recorded onchain. Anyone in the circle can check that the rules are being followed.",
   },
   "land.tsC3t": { es: "Tú mantienes el control de tus fondos", en: "You keep control of your funds" },
   "land.tsC3b": {
     es: "Tu dinero se queda bajo las reglas del contrato, no en la cuenta bancaria ni el bolsillo de alguien más.",
     en: "Your money stays in the rules of the contract, not in someone else's bank account or pocket.",
   },
-  "land.tsC4t": { es: "Construido en Base, en USDC", en: "Built on Base, in USDC" },
+  "land.tsC4t": { es: "Construido en Arbitrum y Base", en: "Built on Arbitrum and Base" },
   "land.tsC4b": {
-    es: "Funciona en Base, la red de Ethereum de bajo costo de Coinbase, usando USDC — una stablecoin anclada al dólar — para que los montos se mantengan estables.",
-    en: "Runs on Base, Coinbase's low-cost Ethereum network, using USDC — a dollar-pegged stablecoin — so amounts stay steady.",
+    es: "Funciona en Arbitrum y Base — redes de Ethereum rápidas y de bajo costo — y ahorras en pesos (MXNB) o dólares (USDC), dinero digital estable que mantiene su valor.",
+    en: "Runs on Arbitrum and Base — fast, low-cost Ethereum networks — and you save in pesos (MXNB) or dollars (USDC), stable digital money that holds its value.",
   },
   // built-in insurance
   "land.insEyebrow": { es: "Seguro integrado", en: "Built-in insurance" },
@@ -579,7 +579,7 @@ export const dict = {
 
   // built for real money
   "land.moneyEyebrow": { es: "Hecho para dinero real", en: "Built for real money" },
-  "land.moneyTitle": { es: "Dinero real, entra y sale — al instante", en: "Real money, in and out — instantly" },
+  "land.moneyTitle": { es: "Fondos reales, ahorro real, pagos instantáneos", en: "Real Funds, Real Savings, Instant Payouts" },
   "land.moneySubtitle": {
     es: "Ahorra en la moneda que ya usas, y recibe tu bote en el momento en que es tu turno.",
     en: "Save in the currency you already use, and get your pot the moment it's your turn.",
