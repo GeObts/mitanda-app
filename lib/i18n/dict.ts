@@ -438,7 +438,6 @@ export const dict = {
 
   // ── tx guard / cost ─────────────────────────────────────────────────────
   "guard.needBalance": { es: "Necesitas {req} {sym} (tienes {bal}).", en: "You need {req} {sym} (you have {bal})." },
-  "guard.faucet": { es: "Consigue USDC de prueba del faucet", en: "Get test USDC from the faucet" },
   "guard.approveAnd": { es: "Aprobar y {action}", en: "Approve & {action}" },
 } as const;
 

@@ -1,18 +1,13 @@
 "use client";
 
 import { useCallback, useEffect, useMemo } from "react";
-import {
-  useAccount,
-  useChainId,
-  useSwitchChain,
-  useWriteContract,
-  useWaitForTransactionReceipt,
-} from "wagmi";
+import { useWriteContract, useWaitForTransactionReceipt } from "wagmi";
 import { useQueryClient } from "@tanstack/react-query";
 
 import { activeChain, tandaContract } from "@/lib/contracts";
 import { BUILDER_DATA_SUFFIX } from "@/lib/app-mode";
 import { describeTxError } from "@/lib/tx-error";
+import { useEnsureChain } from "@/lib/hooks/use-ensure-chain";
 
 export type MarkDefaulterStatus =
   | "idle"
@@ -29,9 +24,14 @@ export type MarkDefaulterStatus =
  * members (especially the cycle's recipient) are the ones motivated to.
  */
 export function useMarkDefaulter(tandaAddress: `0x${string}`) {
-  const { isConnected } = useAccount();
-  const chainId = useChainId();
-  const { switchChain, isPending: isSwitching } = useSwitchChain();
+  const {
+    ensureChain,
+    switchToActiveChain,
+    isWrongNetwork,
+    isSwitching,
+    switchError,
+    resetSwitch,
+  } = useEnsureChain();
   const queryClient = useQueryClient();
 
   const {
@@ -39,7 +39,7 @@ export function useMarkDefaulter(tandaAddress: `0x${string}`) {
     data: hash,
     isPending: isSigning,
     error: writeError,
-    reset,
+    reset: resetWrite,
   } = useWriteContract();
   const {
     isLoading: isConfirming,
@@ -47,10 +47,11 @@ export function useMarkDefaulter(tandaAddress: `0x${string}`) {
     error: receiptError,
   } = useWaitForTransactionReceipt({ hash });
 
-  const isWrongNetwork = isConnected && chainId !== activeChain.id;
-
+  // Auto-switch to the active chain first, then mark. A declined switch
+  // surfaces via switchError instead of a hard write error.
   const mark = useCallback(
-    (participant: `0x${string}`) => {
+    async (participant: `0x${string}`) => {
+      if (!(await ensureChain())) return;
       writeContract({
         ...tandaContract(tandaAddress),
         functionName: "markDefaulter",
@@ -59,13 +60,13 @@ export function useMarkDefaulter(tandaAddress: `0x${string}`) {
         dataSuffix: BUILDER_DATA_SUFFIX,
       });
     },
-    [writeContract, tandaAddress],
+    [ensureChain, writeContract, tandaAddress],
   );
 
-  const switchToActiveChain = useCallback(
-    () => switchChain({ chainId: activeChain.id }),
-    [switchChain],
-  );
+  const reset = useCallback(() => {
+    resetWrite();
+    resetSwitch();
+  }, [resetWrite, resetSwitch]);
 
   // On success, refetch app reads so the cycle becomes releasable.
   useEffect(() => {
@@ -73,7 +74,7 @@ export function useMarkDefaulter(tandaAddress: `0x${string}`) {
   }, [isSuccess, queryClient]);
 
   const status: MarkDefaulterStatus =
-    writeError || receiptError
+    writeError || receiptError || switchError
       ? "error"
       : isSuccess
         ? "success"
@@ -84,10 +85,11 @@ export function useMarkDefaulter(tandaAddress: `0x${string}`) {
             : "idle";
 
   const error = useMemo(() => {
+    if (switchError) return describeTxError(switchError);
     if (writeError) return describeTxError(writeError);
     if (receiptError) return describeTxError(receiptError);
     return null;
-  }, [writeError, receiptError]);
+  }, [switchError, writeError, receiptError]);
 
   return {
     mark,

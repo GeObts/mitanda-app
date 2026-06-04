@@ -1,18 +1,13 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef } from "react";
-import {
-  useAccount,
-  useChainId,
-  useSwitchChain,
-  useWriteContract,
-  useWaitForTransactionReceipt,
-} from "wagmi";
+import { useWriteContract, useWaitForTransactionReceipt } from "wagmi";
 import { useQueryClient } from "@tanstack/react-query";
 
 import { activeChain, tandaContract } from "@/lib/contracts";
 import { BUILDER_DATA_SUFFIX } from "@/lib/app-mode";
 import { describeTxError } from "@/lib/tx-error";
+import { useEnsureChain } from "@/lib/hooks/use-ensure-chain";
 
 export type ReleaseStatus =
   | "idle"
@@ -38,9 +33,14 @@ export function useReleasePayout(
   opts?: { andClaim?: boolean },
 ) {
   const andClaim = opts?.andClaim ?? false;
-  const { isConnected } = useAccount();
-  const chainId = useChainId();
-  const { switchChain, isPending: isSwitching } = useSwitchChain();
+  const {
+    ensureChain,
+    switchToActiveChain,
+    isWrongNetwork,
+    isSwitching,
+    switchError,
+    resetSwitch,
+  } = useEnsureChain();
   const queryClient = useQueryClient();
 
   const release = useWriteContract();
@@ -48,11 +48,12 @@ export function useReleasePayout(
   const claimW = useWriteContract();
   const claimReceipt = useWaitForTransactionReceipt({ hash: claimW.data });
 
-  const isWrongNetwork = isConnected && chainId !== activeChain.id;
   const claimFiredRef = useRef(false);
 
-  const run = useCallback(() => {
-    if (isWrongNetwork) return;
+  // Auto-switch to the active chain first, then release. A declined switch
+  // surfaces via switchError instead of silently no-op'ing.
+  const run = useCallback(async () => {
+    if (!(await ensureChain())) return;
     claimFiredRef.current = false;
     release.writeContract({
       ...tandaContract(tandaAddress),
@@ -60,7 +61,7 @@ export function useReleasePayout(
       chainId: activeChain.id,
       dataSuffix: BUILDER_DATA_SUFFIX,
     });
-  }, [isWrongNetwork, release, tandaAddress]);
+  }, [ensureChain, release, tandaAddress]);
 
   // Once the release confirms: recipient flow fires the claim (deferring the
   // read-refresh until the claim lands, so the card doesn't unmount mid-flight);
@@ -86,20 +87,16 @@ export function useReleasePayout(
     if (claimReceipt.isSuccess) queryClient.invalidateQueries();
   }, [claimReceipt.isSuccess, queryClient]);
 
-  const switchToActiveChain = useCallback(
-    () => switchChain({ chainId: activeChain.id }),
-    [switchChain],
-  );
-
   const reset = useCallback(() => {
     claimFiredRef.current = false;
     release.reset();
     claimW.reset();
-  }, [release, claimW]);
+    resetSwitch();
+  }, [release, claimW, resetSwitch]);
 
   const releaseErr = release.error || releaseReceipt.error;
   const claimErr = claimW.error || claimReceipt.error;
-  const errorObj = releaseErr || claimErr;
+  const errorObj = switchError || releaseErr || claimErr;
   const errorPhase: "release" | "claim" | null = releaseErr
     ? "release"
     : claimErr

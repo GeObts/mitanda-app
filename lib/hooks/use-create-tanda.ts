@@ -3,9 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   useAccount,
-  useChainId,
   useReadContract,
-  useSwitchChain,
   useWriteContract,
   useWaitForTransactionReceipt,
 } from "wagmi";
@@ -15,6 +13,7 @@ import { parseEventLogs } from "viem";
 import { activeChain, erc20, mitanda, ManagerAbi } from "@/lib/contracts";
 import { BUILDER_DATA_SUFFIX } from "@/lib/app-mode";
 import { describeTxError } from "@/lib/tx-error";
+import { useEnsureChain } from "@/lib/hooks/use-ensure-chain";
 import type { CreateTandaArgs } from "@/lib/tanda-form";
 
 export type CreateStatus =
@@ -56,9 +55,15 @@ export function useCreateTanda({
   token?: `0x${string}`;
   charge: bigint;
 }): UseCreateTanda {
-  const { address, isConnected } = useAccount();
-  const chainId = useChainId();
-  const { switchChain, isPending: isSwitching } = useSwitchChain();
+  const { address } = useAccount();
+  const {
+    ensureChain,
+    switchToActiveChain,
+    isWrongNetwork,
+    isSwitching,
+    switchError,
+    resetSwitch,
+  } = useEnsureChain();
   const queryClient = useQueryClient();
 
   const tokenCfg = useMemo(
@@ -115,8 +120,11 @@ export function useCreateTanda({
     });
   }, [create]);
 
+  // Auto-switch to the active chain first, then approve/create. A declined
+  // switch surfaces via switchError instead of a hard write error.
   const submit = useCallback(
-    (args: CreateTandaArgs, tokenArg: `0x${string}`) => {
+    async (args: CreateTandaArgs, tokenArg: `0x${string}`) => {
+      if (!(await ensureChain())) return;
       pendingRef.current = { args, token: tokenArg };
       createFiredRef.current = false;
       if (needsApproval) {
@@ -132,7 +140,7 @@ export function useCreateTanda({
         fireCreate();
       }
     },
-    [needsApproval, approve, charge, fireCreate],
+    [ensureChain, needsApproval, approve, charge, fireCreate],
   );
 
   // After approval confirms, refetch allowance and fire createTanda once.
@@ -147,30 +155,21 @@ export function useCreateTanda({
     }
   }, [flow, approveReceipt.isSuccess, refetchAllowance, fireCreate]);
 
-  // createTanda confirmed → success + refetch app reads.
+  // createTanda confirmed → refetch app reads (success is derived in `status`).
   useEffect(() => {
     if (flow === "creating" && createMined) {
-      setFlow("done");
       queryClient.invalidateQueries();
     }
   }, [flow, createMined, queryClient]);
 
+  // `status` derives "error" from errorObj directly, so no effect is needed to
+  // transition the flow.
   const errorObj =
-    approve.error || approveReceipt.error || create.error || null;
-  useEffect(() => {
-    if (errorObj && flow !== "error") setFlow("error");
-  }, [errorObj, flow]);
-
-  const isWrongNetwork = isConnected && chainId !== activeChain.id;
-
-  const switchToActiveChain = useCallback(
-    () => switchChain({ chainId: activeChain.id }),
-    [switchChain],
-  );
+    switchError || approve.error || approveReceipt.error || create.error || null;
 
   const status: CreateStatus = useMemo(() => {
-    if (flow === "error" || errorObj) return "error";
-    if (flow === "done") return "success";
+    if (errorObj) return "error";
+    if (createMined) return "success";
     if (flow === "creating") {
       if (create.isPending) return "signing";
       if (create.data && isConfirming) return "pending";
@@ -183,6 +182,7 @@ export function useCreateTanda({
   }, [
     flow,
     errorObj,
+    createMined,
     create.isPending,
     create.data,
     isConfirming,
@@ -224,7 +224,8 @@ export function useCreateTanda({
     setFlow("idle");
     approve.reset();
     create.reset();
-  }, [approve, create]);
+    resetSwitch();
+  }, [approve, create, resetSwitch]);
 
   return {
     submit,

@@ -10,9 +10,6 @@ import { useT } from "@/lib/i18n";
 export const zeroAddr =
   "0x0000000000000000000000000000000000000000" as const;
 
-/** Circle USDC faucet (testnet). */
-const FAUCET_URL = "https://faucet.circle.com";
-
 /** Friendly payout-interval label from seconds. */
 export function intervalLabel(seconds: bigint): string {
   const days = Number(seconds) / 86400;
@@ -104,7 +101,6 @@ export function GuardArea({
   }
 
   if (!tx.hasEnoughBalance) {
-    const isUsdc = symbol.toUpperCase() === "USDC";
     return (
       <div className="space-y-2">
         <Banner tone="danger" icon={<Wallet className="size-4" />}>
@@ -113,20 +109,6 @@ export function GuardArea({
             sym: symbol,
             bal: fmt(tx.balance),
           })}
-          {isUsdc && (
-            <>
-              {" "}
-              <a
-                href={FAUCET_URL}
-                target="_blank"
-                rel="noreferrer"
-                className="underline"
-              >
-                {t("guard.faucet")}
-              </a>
-              .
-            </>
-          )}
         </Banner>
         <button type="button" disabled className={primaryBtn}>
           {actionLabel}
