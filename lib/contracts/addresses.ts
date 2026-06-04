@@ -92,28 +92,28 @@ export const addresses = {
       "0xD55c72B7fF4777D382Bd69b9B27Cc1da799d119d",
     ) as Hex | undefined,
   },
-  // ── Base Sepolia (legacy / fallback) ──────────────────────────────────────
+  // ── Base Sepolia (testnet) ────────────────────────────────────────────────
   [baseSepolia.id]: {
-    // v2 redeploy (SignatureChecker invites for smart-account creators).
+    // v4 audit-hardened redeploy (rehearsal for Base mainnet).
     manager: env(
       "NEXT_PUBLIC_MANAGER_ADDRESS",
-      "0x606f71bd7Fded64E9964dE2DcEDEC0f9Ed8dBe72",
+      "0x95c0CC4a57BFF8e0A258f6a40957b9D3528290A4",
     ),
     tandaImpl: env(
       "NEXT_PUBLIC_TANDA_IMPL_ADDRESS",
-      "0x0a9844cF5646AF3FEb4EbCD9743FdB743D17Cf16",
+      "0xcd9954a410c6fa08886D70578d79BB69268F2f09",
     ),
     passNft: env(
       "NEXT_PUBLIC_PASS_NFT_ADDRESS",
-      "0xfBC3BC48e7d07D18cE60A68c228C87312703338e",
+      "0x04795Cb38871b7a9055d26b949f93Df76b16f73c",
     ),
     receiptNft: env(
       "NEXT_PUBLIC_RECEIPT_NFT_ADDRESS",
-      "0xcd35759C3181b5316434e803bFbCE0942Ed8683C",
+      "0xe28F0b1Af21C1de8c2833655720B15e589bD6458",
     ),
     completionNft: env(
       "NEXT_PUBLIC_COMPLETION_NFT_ADDRESS",
-      "0x9aa463d8623F40aE6be5a17C391bE9623685Ca30",
+      "0x08045e9A58CE56c33404dF499885b40D994c12bd",
     ),
     // Circle USDC on Base Sepolia.
     usdc: env(
