@@ -6,10 +6,11 @@ import { useAccount } from "wagmi";
 
 import { Wordmark } from "@/components/mt/wordmark";
 import { ThemeToggle } from "@/components/mt/theme-toggle";
+import { LangToggle } from "@/components/mt/lang-toggle";
 import { ConnectButton } from "@/components/mt/connect-button";
 import { Avatar } from "@/components/mt/avatar";
 import { AvatarUploadDialog } from "@/components/avatar-upload-dialog";
-import { activeChain } from "@/lib/contracts";
+import { useT } from "@/lib/i18n";
 
 /**
  * Persistent top app bar for the desktop app shell: MiTanda wordmark (left),
@@ -19,12 +20,13 @@ import { activeChain } from "@/lib/contracts";
  * wallet controls remain — keeping today's single-column feel.
  */
 const NAV = [
-  { label: "Dashboard", href: "/dashboard" },
-  { label: "Discover", href: "#discover" },
-  { label: "My passes", href: "/my-nfts" },
-];
+  { key: "nav.dashboard", href: "/dashboard" },
+  { key: "nav.discover", href: "#discover" },
+  { key: "nav.passes", href: "/my-nfts" },
+] as const;
 
 export function AppBar() {
+  const t = useT();
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-background/75 backdrop-blur-xl">
       {/* Full-bleed: the bar spans the whole viewport (wordmark flush far-left,
@@ -55,13 +57,13 @@ export function AppBar() {
               href={item.href}
               className="rounded-btn px-3 py-2 text-body font-medium text-foreground-muted transition-colors hover:bg-background-muted hover:text-foreground"
             >
-              {item.label}
+              {t(item.key)}
             </a>
           ))}
         </nav>
 
         <div className="ml-auto flex min-w-0 items-center gap-1.5">
-          <ChainIndicator />
+          <LangToggle />
           <ThemeToggle />
           <HeaderAvatar />
           <ConnectButton />
@@ -78,34 +80,19 @@ export function AppBar() {
 function HeaderAvatar() {
   const { address } = useAccount();
   const [open, setOpen] = useState(false);
+  const t = useT();
   if (!address) return null;
   return (
     <>
       <button
         type="button"
         onClick={() => setOpen(true)}
-        aria-label="Edit profile photo"
+        aria-label={t("connect.editPhoto")}
         className="rounded-full ring-1 ring-border transition-transform hover:scale-105 hover:ring-primary/40"
       >
         <Avatar address={address} size={32} />
       </button>
       <AvatarUploadDialog open={open} onOpenChange={setOpen} address={address} />
     </>
-  );
-}
-
-/**
- * Active-chain indicator. The app pins every read/write to a single active
- * chain (see lib/contracts), so this is a status pill rather than a free-form
- * network switcher — switching the wallet away from the active chain would only
- * break writes (which already prompt a switch-back where needed). Hidden on the
- * narrowest screens to protect the wallet pill's space.
- */
-function ChainIndicator() {
-  return (
-    <span className="hidden h-10 items-center gap-1.5 rounded-btn bg-background-muted px-3 text-caption font-medium text-foreground-muted sm:flex">
-      <span className="size-2 rounded-full bg-success" aria-hidden />
-      <span className="max-w-[7.5rem] truncate">{activeChain.name}</span>
-    </span>
   );
 }

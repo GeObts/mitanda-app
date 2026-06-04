@@ -6,10 +6,10 @@ import { Users, Clock, Compass, BadgeCheck, Crown } from "lucide-react";
 import { usePublicTandas, type PublicTanda } from "@/lib/hooks/use-public-tandas";
 import { useToken } from "@/lib/hooks/use-token";
 import { fmtToken } from "@/lib/contracts";
-import { intervalLabel } from "@/components/tx-shared";
 import { JoinTandaDialog } from "@/components/join-tanda-dialog";
 import { CreateTandaButton } from "@/components/create-tanda-dialog";
 import { AvatarStack } from "@/components/mt/avatar";
+import { useT, useIntervalLabel } from "@/lib/i18n";
 
 /**
  * "Public tandas you can join" — a horizontal strip of open, public tandas with
@@ -19,6 +19,7 @@ import { AvatarStack } from "@/components/mt/avatar";
  * clone). Tandas the user already joined or created are badged, not hidden.
  */
 export function PublicTandasStrip() {
+  const t = useT();
   const { tandas, isLoading, isError } = usePublicTandas();
   const [joinTarget, setJoinTarget] = useState<{
     address: `0x${string}`;
@@ -33,10 +34,10 @@ export function PublicTandasStrip() {
         </span>
         <div>
           <h2 id="discover-heading" className="text-h2">
-            Public tandas you can join
+            {t("discover.title")}
           </h2>
           <p className="text-caption text-foreground-muted">
-            Open circles with seats still available — anyone can join.
+            {t("discover.subtitle")}
           </p>
         </div>
       </div>
@@ -45,13 +46,13 @@ export function PublicTandasStrip() {
         <LoadingStrip />
       ) : isError ? (
         <EmptyState
-          title="Couldn't load open tandas"
-          body="We couldn't read open tandas from the network just now. Check your connection and try again."
+          title={t("discover.errTitle")}
+          body={t("discover.errBody")}
         />
       ) : tandas.length === 0 ? (
         <EmptyState
-          title="No open tandas right now"
-          body="Be the first — create a tanda and invite your circle to join."
+          title={t("discover.emptyTitle")}
+          body={t("discover.emptyBody")}
           showCreate
         />
       ) : (
@@ -89,6 +90,8 @@ function PublicTandaCard({
   tanda: PublicTanda;
   onJoin: () => void;
 }) {
+  const t = useT();
+  const intervalLabel = useIntervalLabel();
   const { token } = useToken(tanda.tokenAddress);
   const symbol = token?.symbol ?? "";
   const decimals = token?.decimals ?? 6;
@@ -100,35 +103,39 @@ function PublicTandaCard({
         <span className="text-h3 text-foreground">Tanda #{tanda.id}</span>
         {tanda.isCreator ? (
           <Badge icon={<Crown className="size-3" />} tone="accent">
-            Yours
+            {t("discover.yours")}
           </Badge>
         ) : tanda.alreadyJoined ? (
           <Badge icon={<BadgeCheck className="size-3" />} tone="success">
-            Joined
+            {t("discover.joined")}
           </Badge>
         ) : (
-          <Badge tone="primary">{seatsLeft} left</Badge>
+          <Badge tone="primary">{t("discover.left", { n: seatsLeft })}</Badge>
         )}
       </div>
 
       <div className="mt-4">
-        <div className="text-caption text-foreground-subtle">Contribution</div>
+        <div className="text-caption text-foreground-subtle">
+          {t("discover.contribution")}
+        </div>
         <div className="text-h2 text-foreground">
           {fmtToken(tanda.contributionAmount, decimals)}{" "}
           <span className="text-h3 text-foreground-muted">{symbol}</span>
         </div>
-        <div className="text-caption text-foreground-subtle">per round</div>
+        <div className="text-caption text-foreground-subtle">
+          {t("discover.perRound")}
+        </div>
       </div>
 
       <dl className="mt-4 space-y-2 text-caption">
         <Row
           icon={<Users className="size-3.5" />}
-          label="Seats filled"
+          label={t("discover.seatsFilled")}
           value={`${tanda.seatsFilled}/${tanda.seatsTarget}`}
         />
         <Row
           icon={<Clock className="size-3.5" />}
-          label="Payout"
+          label={t("card.payout")}
           value={intervalLabel(tanda.payoutInterval)}
         />
       </dl>
@@ -151,7 +158,9 @@ function PublicTandaCard({
       {tanda.memberAddrs.length > 0 && (
         <div className="mt-3 flex items-center gap-2">
           <AvatarStack addresses={tanda.memberAddrs} size={26} />
-          <span className="text-caption text-foreground-subtle">in the circle</span>
+          <span className="text-caption text-foreground-subtle">
+            {t("discover.inCircle")}
+          </span>
         </div>
       )}
 
@@ -160,7 +169,7 @@ function PublicTandaCard({
         onClick={onJoin}
         className="mt-5 flex w-full items-center justify-center rounded-btn bg-primary px-4 py-2.5 text-body font-semibold text-primary-foreground transition-colors hover:bg-primary-hover"
       >
-        {tanda.alreadyJoined ? "View" : "Join circle"}
+        {tanda.alreadyJoined ? t("discover.view") : t("discover.joinCircle")}
       </button>
     </article>
   );

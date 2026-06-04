@@ -7,6 +7,7 @@ import { EXPLORER_TX } from "@/lib/tx-error";
 import { useReleasePayout } from "@/lib/hooks/use-release-payout";
 import { useToken } from "@/lib/hooks/use-token";
 import type { UserTanda } from "@/lib/hooks/use-user-tandas";
+import { useT } from "@/lib/i18n";
 
 const short = (a: `0x${string}`) => `${a.slice(0, 6)}…${a.slice(-4)}`;
 
@@ -37,6 +38,7 @@ export function ReleaseBanner({ tandas }: { tandas: UserTanda[] }) {
 
 /** The recipient's prominent "release & claim" card. */
 function RecipientRelease({ tanda }: { tanda: UserTanda }) {
+  const t = useT();
   const { token: meta } = useToken(tanda.tokenAddress);
   const symbol = meta?.symbol ?? "";
   const decimals = meta?.decimals ?? 6;
@@ -50,12 +52,12 @@ function RecipientRelease({ tanda }: { tanda: UserTanda }) {
     r.status === "claim-pending";
   const busyLabel =
     r.status === "release-sign"
-      ? "Confirm release in your wallet…"
+      ? t("release.confirmRelease")
       : r.status === "release-pending"
-        ? "Releasing your payout…"
+        ? t("release.releasing")
         : r.status === "claim-sign"
-          ? "Confirm claim in your wallet…"
-          : "Sending to your wallet…";
+          ? t("release.confirmClaim")
+          : t("release.sending");
 
   return (
     <div className="rounded-card border border-success/30 bg-success/10 p-5 shadow-card">
@@ -64,10 +66,13 @@ function RecipientRelease({ tanda }: { tanda: UserTanda }) {
           <Gift className="size-5" />
         </div>
         <div className="min-w-0 flex-1">
-          <h2 className="text-h3 text-foreground">Your payout is ready</h2>
+          <h2 className="text-h3 text-foreground">{t("release.readyTitle")}</h2>
           <p className="mt-0.5 text-caption text-foreground-muted">
-            It&apos;s your turn for Tanda #{tanda.id} (cycle {tanda.currentCycle}).
-            Release this cycle and we&apos;ll send {amount} straight to your wallet.
+            {t("release.readyBody", {
+              id: tanda.id,
+              cycle: tanda.currentCycle,
+              amt: amount,
+            })}
           </p>
         </div>
       </div>
@@ -90,7 +95,7 @@ function RecipientRelease({ tanda }: { tanda: UserTanda }) {
               </>
             ) : (
               <>
-                <Gift className="size-4" /> Release &amp; claim {amount}
+                <Gift className="size-4" /> {t("release.releaseClaim", { amt: amount })}
               </>
             )}
           </button>
@@ -103,6 +108,7 @@ function RecipientRelease({ tanda }: { tanda: UserTanda }) {
 
 /** The altruistic fallback any participant can use to settle the cycle. */
 function FallbackRelease({ tanda }: { tanda: UserTanda }) {
+  const t = useT();
   const { token: meta } = useToken(tanda.tokenAddress);
   const symbol = meta?.symbol ?? "";
   const decimals = meta?.decimals ?? 6;
@@ -118,11 +124,16 @@ function FallbackRelease({ tanda }: { tanda: UserTanda }) {
           <Zap className="size-5" />
         </div>
         <div className="min-w-0 flex-1">
-          <h2 className="text-h3 text-foreground">This cycle&apos;s payout is ready</h2>
+          <h2 className="text-h3 text-foreground">{t("release.cycleReadyTitle")}</h2>
           <p className="mt-0.5 text-caption text-foreground-muted">
-            Tanda #{tanda.id} cycle {tanda.currentCycle} can be paid out
-            {tanda.currentRecipient ? ` to ${short(tanda.currentRecipient)}` : ""} (
-            {amount}). Anyone can release it — they&apos;ll claim it themselves.
+            {t("release.cycleReadyBody", {
+              id: tanda.id,
+              cycle: tanda.currentCycle,
+              to: tanda.currentRecipient
+                ? t("release.toAddr", { addr: short(tanda.currentRecipient) })
+                : "",
+              amt: amount,
+            })}
           </p>
         </div>
       </div>
@@ -130,7 +141,7 @@ function FallbackRelease({ tanda }: { tanda: UserTanda }) {
       <div className="mt-4">
         {r.status === "success" ? (
           <div className="flex items-center justify-center gap-1.5 py-2 text-body font-semibold text-success">
-            <CheckCircle2 className="size-4" /> Payout released
+            <CheckCircle2 className="size-4" /> {t("release.released")}
           </div>
         ) : r.isWrongNetwork ? (
           <SwitchButton onClick={r.switchToActiveChain} isSwitching={r.isSwitching} />
@@ -144,10 +155,10 @@ function FallbackRelease({ tanda }: { tanda: UserTanda }) {
             {busy ? (
               <>
                 <Loader2 className="size-4 animate-spin" />
-                {r.status === "release-sign" ? "Confirm in your wallet…" : "Releasing…"}
+                {r.status === "release-sign" ? t("common.confirmWallet") : t("release.releasing2")}
               </>
             ) : (
-              "Release this cycle's payout"
+              t("release.releaseBtn")
             )}
           </button>
         )}
@@ -158,10 +169,11 @@ function FallbackRelease({ tanda }: { tanda: UserTanda }) {
 }
 
 function ClaimedRow({ hash }: { hash?: `0x${string}` }) {
+  const t = useT();
   return (
     <div className="space-y-1.5">
       <div className="flex items-center justify-center gap-1.5 py-2 text-body font-semibold text-success">
-        <CheckCircle2 className="size-4" /> Claimed!
+        <CheckCircle2 className="size-4" /> {t("claim.claimed")}
       </div>
       {hash && (
         <a
@@ -170,7 +182,7 @@ function ClaimedRow({ hash }: { hash?: `0x${string}` }) {
           rel="noreferrer"
           className="block text-center font-mono text-caption text-accent underline"
         >
-          View transaction
+          {t("common.viewTx")}
         </a>
       )}
     </div>
@@ -186,13 +198,14 @@ function SwitchButton({
   isSwitching: boolean;
   solid?: boolean;
 }) {
+  const t = useT();
   const cls = solid
     ? "flex w-full items-center justify-center gap-2 rounded-btn bg-success px-5 py-3.5 text-h3 text-white transition-colors hover:bg-success/90 disabled:opacity-70"
     : "flex w-full items-center justify-center gap-2 rounded-btn border border-primary px-5 py-3 text-h3 text-primary transition-colors hover:bg-primary/5 disabled:opacity-70 dark:border-accent dark:text-accent";
   return (
     <button type="button" onClick={onClick} disabled={isSwitching} className={cls}>
       {isSwitching && <Loader2 className="size-4 animate-spin" />}
-      Switch to {activeChain.name}
+      {t("common.switchTo", { chain: activeChain.name })}
     </button>
   );
 }

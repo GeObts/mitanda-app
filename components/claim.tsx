@@ -7,6 +7,7 @@ import { EXPLORER_TX } from "@/lib/tx-error";
 import { useWithdraw } from "@/lib/hooks/use-withdraw";
 import { useToken } from "@/lib/hooks/use-token";
 import type { UserTanda } from "@/lib/hooks/use-user-tandas";
+import { useT } from "@/lib/i18n";
 
 /**
  * One-tap pull-payment claim. Sends `withdraw()` on the tanda clone (single tx,
@@ -27,6 +28,7 @@ export function ClaimButton({
   const symbol = meta?.symbol ?? "";
   const decimals = meta?.decimals ?? 6;
   const w = useWithdraw(tandaAddress);
+  const t = useT();
 
   const amountLabel = `${fmtToken(amount, decimals)} ${symbol}`.trim();
   const compact = variant === "compact";
@@ -43,7 +45,7 @@ export function ClaimButton({
             compact ? "text-caption" : "py-2 text-body"
           } font-semibold text-success`}
         >
-          <CheckCircle2 className="size-4" /> Claimed!
+          <CheckCircle2 className="size-4" /> {t("claim.claimed")}
         </div>
         {w.hash && !compact && (
           <a
@@ -52,7 +54,7 @@ export function ClaimButton({
             rel="noreferrer"
             className="block text-center font-mono text-caption text-accent underline"
           >
-            View transaction
+            {t("common.viewTx")}
           </a>
         )}
       </div>
@@ -63,7 +65,7 @@ export function ClaimButton({
     return (
       <button type="button" disabled className={solid}>
         <Loader2 className="size-4 animate-spin" />
-        {w.status === "signing" ? "Confirm in your wallet…" : "Claiming…"}
+        {w.status === "signing" ? t("common.confirmWallet") : t("claim.claiming")}
       </button>
     );
   }
@@ -77,7 +79,7 @@ export function ClaimButton({
         className={solid}
       >
         {w.isSwitching && <Loader2 className="size-4 animate-spin" />}
-        Switch to {activeChain.name}
+        {t("common.switchTo", { chain: activeChain.name })}
       </button>
     );
   }
@@ -86,7 +88,7 @@ export function ClaimButton({
     <div className={compact ? "" : "space-y-1.5"}>
       <button type="button" onClick={w.claim} className={solid}>
         <Gift className="size-4" />
-        Claim {amountLabel}
+        {t("claim.claimAmt", { amt: amountLabel })}
       </button>
       {w.status === "error" && w.error && (
         <p
@@ -107,7 +109,8 @@ export function ClaimButton({
  * nothing to claim.
  */
 export function ClaimBanner({ tandas }: { tandas: UserTanda[] }) {
-  const claimable = tandas.filter((t) => t.claimable > 0n);
+  const t = useT();
+  const claimable = tandas.filter((x) => x.claimable > 0n);
   if (claimable.length === 0) return null;
 
   return (
@@ -117,17 +120,17 @@ export function ClaimBanner({ tandas }: { tandas: UserTanda[] }) {
           <Gift className="size-5" />
         </div>
         <div className="min-w-0 flex-1">
-          <h2 className="text-h3 text-foreground">Your payout is ready</h2>
+          <h2 className="text-h3 text-foreground">{t("claim.readyTitle")}</h2>
           <p className="mt-0.5 text-caption text-foreground-muted">
             {claimable.length === 1
-              ? "You have funds ready to claim — tap to send them to your wallet."
-              : `You have funds ready to claim across ${claimable.length} tandas.`}
+              ? t("claim.readyBodyOne")
+              : t("claim.readyBodyMany", { n: claimable.length })}
           </p>
         </div>
       </div>
       <ul className="mt-4 space-y-2">
-        {claimable.map((t) => (
-          <ClaimRow key={t.id} tanda={t} />
+        {claimable.map((x) => (
+          <ClaimRow key={x.id} tanda={x} />
         ))}
       </ul>
     </div>
@@ -138,6 +141,7 @@ function ClaimRow({ tanda }: { tanda: UserTanda }) {
   const { token: meta } = useToken(tanda.tokenAddress);
   const symbol = meta?.symbol ?? "";
   const decimals = meta?.decimals ?? 6;
+  const t = useT();
   return (
     <li className="flex flex-wrap items-center justify-between gap-2 rounded-btn bg-background-card px-3 py-2.5">
       <div className="min-w-0">
@@ -145,7 +149,10 @@ function ClaimRow({ tanda }: { tanda: UserTanda }) {
           Tanda #{tanda.id}
         </div>
         <div className="text-caption text-foreground-muted">
-          {fmtToken(tanda.claimable, decimals)} {symbol} ready
+          {t("claim.tandaReady", {
+            amt: fmtToken(tanda.claimable, decimals),
+            sym: symbol,
+          })}
         </div>
       </div>
       <ClaimButton

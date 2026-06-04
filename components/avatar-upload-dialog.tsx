@@ -11,9 +11,11 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Avatar } from "@/components/mt/avatar";
-import { useSetAvatar } from "@/lib/hooks/use-avatar";
+import { useProfile, useSetProfile } from "@/lib/hooks/use-avatar";
+import { useT } from "@/lib/i18n";
 
 const OUTPUT_SIZE = 256; // square px stored
+const MAX_NAME = 40;
 
 /** Center-crop + resize an image File to a square JPEG data URL. */
 function fileToSquareDataUrl(file: File): Promise<string> {
@@ -53,7 +55,7 @@ export function AvatarUploadDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-sm">
-        <UploadContent
+        <ProfileContent
           key={open ? "open" : "closed"}
           address={address}
           onDone={() => onOpenChange(false)}
@@ -63,60 +65,65 @@ export function AvatarUploadDialog({
   );
 }
 
-function UploadContent({
+function ProfileContent({
   address,
   onDone,
 }: {
   address?: string;
   onDone: () => void;
 }) {
+  const t = useT();
   const inputRef = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState<string | null>(null);
+  // null until the user edits — until then we show the saved name (derived, so
+  // we never need to setState from an effect when the profile loads).
+  const [typedName, setTypedName] = useState<string | null>(null);
   const [fileError, setFileError] = useState<string | null>(null);
-  const setAvatar = useSetAvatar();
+  const existing = useProfile(address);
+  const setProfile = useSetProfile();
+  const name = typedName ?? existing.name ?? "";
 
   async function onPick(e: React.ChangeEvent<HTMLInputElement>) {
     setFileError(null);
     const file = e.target.files?.[0];
     if (!file) return;
     if (!file.type.startsWith("image/")) {
-      setFileError("Please choose an image file.");
+      setFileError(t("profile.errImage"));
       return;
     }
     try {
       setPreview(await fileToSquareDataUrl(file));
     } catch (err) {
-      setFileError(err instanceof Error ? err.message : "Could not load image.");
+      setFileError(err instanceof Error ? err.message : t("profile.errLoad"));
     }
   }
 
-  if (setAvatar.isSuccess) {
+  if (setProfile.isSuccess) {
     return (
       <div className="flex flex-col items-center gap-3 py-6 text-center">
         <CheckCircle2 className="size-10 text-success" />
-        <h2 className="text-h2">Photo updated</h2>
+        <h2 className="text-h2">{t("profile.updatedTitle")}</h2>
         <p className="max-w-xs text-body text-foreground-muted">
-          Your circle will see your new profile photo.
+          {t("profile.updatedBody")}
         </p>
         <button
           type="button"
           onClick={onDone}
           className="mt-2 flex w-full items-center justify-center rounded-btn bg-primary px-5 py-3 text-h3 text-primary-foreground transition-colors hover:bg-primary-hover"
         >
-          Done
+          {t("common.done")}
         </button>
       </div>
     );
   }
 
+  const canSave = (!!preview || name.trim().length > 0) && !setProfile.isPending;
+
   return (
     <div className="space-y-4">
       <DialogHeader>
-        <DialogTitle className="text-h2">Profile photo</DialogTitle>
-        <DialogDescription>
-          So your circle can recognize you. Stored off-chain, keyed to your
-          wallet — you sign once to confirm it&apos;s you.
-        </DialogDescription>
+        <DialogTitle className="text-h2">{t("profile.title")}</DialogTitle>
+        <DialogDescription>{t("profile.desc")}</DialogDescription>
       </DialogHeader>
 
       <div className="flex flex-col items-center gap-4">
@@ -149,8 +156,21 @@ function UploadContent({
           className="flex items-center gap-2 rounded-btn border border-border px-4 py-2.5 text-body font-medium text-foreground transition-colors hover:bg-background-muted"
         >
           <Upload className="size-4" />
-          {preview ? "Choose a different photo" : "Choose a photo"}
+          {preview ? t("profile.changePhoto") : t("profile.choosePhoto")}
         </button>
+      </div>
+
+      <div className="space-y-1.5">
+        <label className="text-caption font-semibold text-foreground">
+          {t("profile.displayName")}
+        </label>
+        <input
+          value={name}
+          maxLength={MAX_NAME}
+          placeholder={t("profile.namePlaceholder")}
+          onChange={(e) => setTypedName(e.target.value)}
+          className="w-full rounded-btn border border-border bg-background px-3 py-2.5 text-body text-foreground outline-none transition-colors placeholder:text-foreground-subtle focus:border-primary focus:ring-2 focus:ring-primary/20 dark:focus:border-accent dark:focus:ring-accent/20"
+        />
       </div>
 
       {fileError && (
@@ -158,23 +178,25 @@ function UploadContent({
           <AlertTriangle className="size-3.5 shrink-0" /> {fileError}
         </p>
       )}
-      {setAvatar.isError && (
+      {setProfile.isError && (
         <p className="flex items-center gap-1.5 text-caption text-danger">
           <AlertTriangle className="size-3.5 shrink-0" />
-          {setAvatar.error instanceof Error
-            ? setAvatar.error.message
-            : "Upload failed."}
+          {setProfile.error instanceof Error
+            ? setProfile.error.message
+            : "Update failed."}
         </p>
       )}
 
       <button
         type="button"
-        disabled={!preview || setAvatar.isPending}
-        onClick={() => preview && setAvatar.mutate(preview)}
+        disabled={!canSave}
+        onClick={() =>
+          setProfile.mutate({ dataUrl: preview ?? undefined, name })
+        }
         className="flex w-full items-center justify-center gap-2 rounded-btn bg-primary px-5 py-3.5 text-h3 text-primary-foreground transition-colors hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-60"
       >
-        {setAvatar.isPending && <Loader2 className="size-4 animate-spin" />}
-        {setAvatar.isPending ? "Confirm in your wallet…" : "Save photo"}
+        {setProfile.isPending && <Loader2 className="size-4 animate-spin" />}
+        {setProfile.isPending ? t("common.confirmWallet") : t("profile.save")}
       </button>
     </div>
   );

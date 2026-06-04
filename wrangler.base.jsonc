@@ -1,0 +1,33 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  // Second Cloudflare Worker: the Base App build of MiTanda (Base mainnet).
+  // It runs the SAME codebase as wrangler.jsonc; the only difference is the
+  // NEXT_PUBLIC_ACTIVE_CHAIN=base build-time flag (set by scripts/deploy-base.mjs
+  // / .env.base), which repoints the app to Base. Deploy with:
+  //   npm run cf:deploy:base
+  "name": "mitanda-base",
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2025-03-25",
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  },
+  // Shares the same D1 as the web app on purpose: avatars are keyed by wallet
+  // address (chain-agnostic), so a user keeps the same profile photo/name across
+  // both surfaces. Join-requests are keyed by the per-tanda clone address, which
+  // is unique per deployment, so the two chains never collide.
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "mitanda-db",
+      "database_id": "13921cb3-b1b9-4d29-90ab-652aca5df860"
+    }
+  ],
+  // PUBLIC client identifier only. Server SECRETS (BASE_NOTIFICATIONS_API_KEY,
+  // NOTIFY_ADMIN_SECRET, FARCASTER_*) must be set with:
+  //   wrangler secret put <NAME> -c wrangler.base.jsonc
+  "vars": {
+    "NEXT_PUBLIC_PRIVY_APP_ID": "cmpoddngc004e0bjutoaor7t4"
+  }
+}

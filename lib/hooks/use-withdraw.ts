@@ -11,6 +11,7 @@ import {
 import { useQueryClient } from "@tanstack/react-query";
 
 import { activeChain, tandaContract } from "@/lib/contracts";
+import { BUILDER_DATA_SUFFIX } from "@/lib/app-mode";
 import { describeTxError } from "@/lib/tx-error";
 
 export type WithdrawStatus = "idle" | "signing" | "pending" | "success" | "error";
@@ -46,6 +47,7 @@ export function useWithdraw(tandaAddress: `0x${string}`) {
       ...tandaContract(tandaAddress),
       functionName: "withdraw",
       chainId: activeChain.id,
+      dataSuffix: BUILDER_DATA_SUFFIX,
     });
   }, [writeContract, tandaAddress]);
 

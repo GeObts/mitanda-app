@@ -5,6 +5,7 @@ import { Loader2, Wallet } from "lucide-react";
 
 import type { useTwoStepTx } from "@/lib/hooks/use-two-step-tx";
 import { activeChain, fmtToken } from "@/lib/contracts";
+import { useT } from "@/lib/i18n";
 
 export const zeroAddr =
   "0x0000000000000000000000000000000000000000" as const;
@@ -68,12 +69,13 @@ export function GuardArea({
   decimals: number;
 }) {
   const { isConnected } = useAccount();
+  const t = useT();
   const fmt = (v: bigint) => fmtToken(v, decimals);
 
   if (!isConnected) {
     return (
       <Banner tone="muted" icon={<Wallet className="size-4" />}>
-        Connect your wallet (top right) to continue.
+        {t("common.connectToContinue")}
       </Banner>
     );
   }
@@ -87,7 +89,7 @@ export function GuardArea({
         className={primaryBtn}
       >
         {tx.isSwitching && <Loader2 className="size-4 animate-spin" />}
-        Switch to {activeChain.name}
+        {t("common.switchTo", { chain: activeChain.name })}
       </button>
     );
   }
@@ -96,7 +98,7 @@ export function GuardArea({
   if (tx.allowance === null || tx.balance === null) {
     return (
       <button type="button" disabled className={primaryBtn}>
-        <Loader2 className="size-4 animate-spin" /> Checking…
+        <Loader2 className="size-4 animate-spin" /> {t("common.checking")}
       </button>
     );
   }
@@ -106,7 +108,11 @@ export function GuardArea({
     return (
       <div className="space-y-2">
         <Banner tone="danger" icon={<Wallet className="size-4" />}>
-          You need {fmt(required)} {symbol} (you have {fmt(tx.balance)}).
+          {t("guard.needBalance", {
+            req: fmt(required),
+            sym: symbol,
+            bal: fmt(tx.balance),
+          })}
           {isUsdc && (
             <>
               {" "}
@@ -116,7 +122,7 @@ export function GuardArea({
                 rel="noreferrer"
                 className="underline"
               >
-                Get test USDC from the faucet
+                {t("guard.faucet")}
               </a>
               .
             </>
@@ -131,7 +137,7 @@ export function GuardArea({
 
   return (
     <button type="button" onClick={tx.run} className={primaryBtn}>
-      {tx.needsApproval ? `Approve & ${actionLabel}` : actionLabel}
+      {tx.needsApproval ? t("guard.approveAnd", { action: actionLabel }) : actionLabel}
     </button>
   );
 }

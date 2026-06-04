@@ -12,6 +12,7 @@ import {
 import { useQueryClient } from "@tanstack/react-query";
 
 import { activeChain, erc20, mitanda } from "@/lib/contracts";
+import { BUILDER_DATA_SUFFIX } from "@/lib/app-mode";
 import { describeTxError } from "@/lib/tx-error";
 
 export interface ActionConfig {
@@ -106,6 +107,7 @@ export function useTwoStepTx({ spender, requiredAmount, token, action }: Params)
       functionName: action.functionName,
       args: action.args,
       chainId: activeChain.id,
+      dataSuffix: BUILDER_DATA_SUFFIX,
     } as never);
   }, [action, act]);
 
@@ -121,6 +123,7 @@ export function useTwoStepTx({ spender, requiredAmount, token, action }: Params)
         functionName: "approve",
         args: [spender, requiredAmount],
         chainId: activeChain.id,
+        dataSuffix: BUILDER_DATA_SUFFIX,
       });
     } else {
       fireAction();

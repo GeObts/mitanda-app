@@ -1,13 +1,19 @@
 // Deployed contract addresses for Mi Tanda, keyed by chain.
 //
 // Source of truth:
-//   - Arbitrum One    (42161):  mitanda-contracts/deployments/arbitrum-one-mainnet.md  ← ACTIVE (live)
+//   - Arbitrum One    (42161):  mitanda-contracts/deployments/arbitrum-one-mainnet.md  ← web app (live)
+//   - Base mainnet    (8453):   mitanda-contracts/deployments/base-mainnet.md          ← Base App
 //   - Arbitrum Sepolia (421614): mitanda-contracts/deployments/421614.json  (testnet)
 //   - Base Sepolia    (84532):  mitanda-contracts/deployments/84532.json     (testnet)
 // These are public addresses (not secrets), so they're committed as literals.
 // Each chain has its own NEXT_PUBLIC_* override prefix so a stale override for
 // one chain can't hijack the active chain.
-import { arbitrum, arbitrumSepolia, baseSepolia } from "viem/chains";
+//
+// Which chain the app actually reads/writes is chosen at BUILD time by
+// NEXT_PUBLIC_ACTIVE_CHAIN (see lib/app-mode.ts), so the same codebase ships as
+// both the Arbitrum web app (default) and the Base App build.
+import { arbitrum, arbitrumSepolia, base, baseSepolia } from "viem/chains";
+import { APP_MODE } from "@/lib/app-mode";
 
 type Hex = `0x${string}`;
 
@@ -50,6 +56,41 @@ export const addresses = {
       "NEXT_PUBLIC_ARB_ONE_MXNB_ADDRESS",
       "0xF197FFC28c23E0309B5559e7a166f2c6164C80aA",
     ) as Hex | undefined,
+  },
+  // ── Base mainnet (8453) — the Base App build (NEXT_PUBLIC_ACTIVE_CHAIN=base) ─
+  // Fill these in from mitanda-contracts/deployments/base-mainnet.md. Until set,
+  // they fall back to the zero address (reads return empty, writes are disabled)
+  // so the build never breaks — but the Base App build is non-functional until
+  // the five MiTanda addresses below are provided (literal or NEXT_PUBLIC_BASE_*).
+  [base.id]: {
+    manager: env(
+      "NEXT_PUBLIC_BASE_MANAGER_ADDRESS",
+      "0x0000000000000000000000000000000000000000",
+    ),
+    tandaImpl: env(
+      "NEXT_PUBLIC_BASE_TANDA_IMPL_ADDRESS",
+      "0x0000000000000000000000000000000000000000",
+    ),
+    passNft: env(
+      "NEXT_PUBLIC_BASE_PASS_NFT_ADDRESS",
+      "0x0000000000000000000000000000000000000000",
+    ),
+    receiptNft: env(
+      "NEXT_PUBLIC_BASE_RECEIPT_NFT_ADDRESS",
+      "0x0000000000000000000000000000000000000000",
+    ),
+    completionNft: env(
+      "NEXT_PUBLIC_BASE_COMPLETION_NFT_ADDRESS",
+      "0x0000000000000000000000000000000000000000",
+    ),
+    // Circle-native USDC on Base mainnet (well-known; override only if needed).
+    usdc: env(
+      "NEXT_PUBLIC_BASE_USDC_ADDRESS",
+      "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+    ),
+    // MXNB is not natively deployed on Base — leave undefined unless bridged.
+    mxnb: (process.env.NEXT_PUBLIC_BASE_MXNB_ADDRESS as Hex | undefined) ||
+      undefined,
   },
   // ── Arbitrum Sepolia (testnet) ────────────────────────────────────────────
   // v4 redeploy (audit hardening: NFT mints use _mint — no onERC721Received
@@ -125,8 +166,18 @@ export const addresses = {
   },
 } as const;
 
-/** The chain the app reads/writes against. Switch this to repoint the app. */
-export const activeChain = arbitrum;
+/**
+ * The chain the app reads/writes against — chosen at build time by
+ * NEXT_PUBLIC_ACTIVE_CHAIN (lib/app-mode.ts). Default (web app) is Arbitrum One;
+ * the Base App build resolves to Base mainnet (or Base Sepolia for the rehearsal
+ * build). Every consumer reads from here, so this one switch repoints the app.
+ */
+export const activeChain =
+  APP_MODE === "base"
+    ? base
+    : APP_MODE === "baseSepolia"
+      ? baseSepolia
+      : arbitrum;
 export const DEFAULT_CHAIN_ID = activeChain.id;
 
 export type MitandaAddresses = (typeof addresses)[typeof DEFAULT_CHAIN_ID];

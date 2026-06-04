@@ -21,6 +21,7 @@ import { useToken } from "@/lib/hooks/use-token";
 import { CostBreakdown, TwoStepProgress } from "@/components/tx-ui";
 import { EXPLORER_TX } from "@/lib/tx-error";
 import { Banner, GuardArea } from "@/components/tx-shared";
+import { useT } from "@/lib/i18n";
 
 export interface PayTarget {
   address: `0x${string}`;
@@ -41,6 +42,7 @@ export interface PayTarget {
  */
 export function PayTandaButton({ tanda }: { tanda: PayTarget }) {
   const [open, setOpen] = useState(false);
+  const t = useT();
 
   if (tanda.state !== TandaState.ACTIVE) {
     return (
@@ -50,10 +52,10 @@ export function PayTandaButton({ tanda }: { tanda: PayTarget }) {
           disabled
           className="flex w-full cursor-not-allowed items-center justify-center gap-2 rounded-btn border border-border bg-background-muted px-5 py-3 text-h3 text-foreground-subtle"
         >
-          <Clock className="size-4" /> Make a payment
+          <Clock className="size-4" /> {t("pay.makePayment")}
         </button>
         <p className="flex items-center justify-center gap-1.5 text-caption text-foreground-muted">
-          Payments open once your tanda fills and starts.
+          {t("pay.opensWhenFull")}
         </p>
       </div>
     );
@@ -66,7 +68,7 @@ export function PayTandaButton({ tanda }: { tanda: PayTarget }) {
         onClick={() => setOpen(true)}
         className="flex w-full items-center justify-center gap-2 rounded-btn border border-primary bg-transparent px-5 py-3 text-h3 text-primary transition-colors hover:bg-primary/5 dark:border-accent dark:text-accent dark:hover:bg-accent/10"
       >
-        Make a payment
+        {t("pay.makePayment")}
       </button>
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="max-w-md">
@@ -99,6 +101,8 @@ function PayContent({
   const { token: tokenMeta } = useToken(tanda.token);
   const symbol = tokenMeta?.symbol ?? "";
   const decimals = tokenMeta?.decimals ?? 6;
+  const t = useT();
+  const payLabel = t(clamped === 1 ? "pay.payNCyclesOne" : "pay.payNCycles", { n: clamped });
 
   const tx = useTwoStepTx({
     spender: tanda.address,
@@ -121,19 +125,17 @@ function PayContent({
     return (
       <div className="space-y-4">
         <DialogHeader>
-          <DialogTitle className="text-h2">Not started yet</DialogTitle>
+          <DialogTitle className="text-h2">{t("pay.notStartedTitle")}</DialogTitle>
         </DialogHeader>
         <Banner tone="muted" icon={<Clock className="size-4" />}>
-          Payments open once your tanda fills and starts. You&apos;ve already
-          paid your first cycle by joining — there&apos;s nothing to pay until it
-          goes active.
+          {t("pay.notStartedBody")}
         </Banner>
         <button
           type="button"
           onClick={onDone}
           className="flex w-full items-center justify-center rounded-btn bg-primary px-5 py-3 text-h3 text-primary-foreground transition-colors hover:bg-primary-hover"
         >
-          Got it
+          {t("common.gotIt")}
         </button>
       </div>
     );
@@ -143,10 +145,9 @@ function PayContent({
     return (
       <div className="flex flex-col items-center gap-3 py-6 text-center">
         <CheckCircle2 className="size-10 text-success" />
-        <h2 className="text-h2">Payment confirmed</h2>
+        <h2 className="text-h2">{t("pay.confirmedTitle")}</h2>
         <p className="max-w-xs text-body text-foreground-muted">
-          You paid {clamped} cycle{clamped === 1 ? "" : "s"}. Your dashboard has
-          been updated.
+          {t(clamped === 1 ? "pay.confirmedBodyOne" : "pay.confirmedBody", { n: clamped })}
         </p>
         {tx.actionHash && (
           <a
@@ -155,7 +156,7 @@ function PayContent({
             rel="noreferrer"
             className="font-mono text-caption text-accent underline"
           >
-            View transaction
+            {t("common.viewTx")}
           </a>
         )}
         <button
@@ -163,7 +164,7 @@ function PayContent({
           onClick={onDone}
           className="mt-2 flex w-full items-center justify-center rounded-btn bg-primary px-5 py-3 text-h3 text-primary-foreground transition-colors hover:bg-primary-hover"
         >
-          Done
+          {t("common.done")}
         </button>
       </div>
     );
@@ -178,16 +179,14 @@ function PayContent({
     return (
       <div className="space-y-4">
         <DialogHeader>
-          <DialogTitle className="text-h2">Making payment</DialogTitle>
-          <DialogDescription>
-            Keep this open until both steps confirm.
-          </DialogDescription>
+          <DialogTitle className="text-h2">{t("pay.makingTitle")}</DialogTitle>
+          <DialogDescription>{t("join.joiningDesc")}</DialogDescription>
         </DialogHeader>
         <TwoStepProgress
           status={tx.status}
           errorPhase={tx.errorPhase}
           needsApproval={tx.needsApproval}
-          actionLabel={`Pay ${clamped} cycle${clamped === 1 ? "" : "s"}`}
+          actionLabel={payLabel}
           approveHash={tx.approveHash}
           actionHash={tx.actionHash}
           tokenSymbol={symbol}
@@ -199,10 +198,9 @@ function PayContent({
   return (
     <div className="space-y-4">
       <DialogHeader>
-        <DialogTitle className="text-h2">Make a payment</DialogTitle>
+        <DialogTitle className="text-h2">{t("pay.title")}</DialogTitle>
         <DialogDescription>
-          Pay one or more cycles ahead. You&apos;ve paid through cycle{" "}
-          {tanda.paidUntilCycle} of {tanda.totalCycles}.
+          {t("pay.desc", { n: tanda.paidUntilCycle, total: tanda.totalCycles })}
         </DialogDescription>
       </DialogHeader>
 
@@ -214,7 +212,7 @@ function PayContent({
 
       {cap <= 0 ? (
         <Banner tone="muted" icon={<CheckCircle2 className="size-4" />}>
-          You&apos;re fully paid up for this tanda.
+          {t("pay.fullyPaid")}
         </Banner>
       ) : (
         <>
@@ -222,10 +220,10 @@ function PayContent({
           <div className="space-y-1.5">
             <div className="flex items-baseline justify-between">
               <label className="text-caption font-semibold text-foreground">
-                Cycles to pay
+                {t("pay.cyclesToPay")}
               </label>
               <span className="text-caption text-foreground-subtle">
-                up to {cap}
+                {t("pay.upTo", { n: cap })}
               </span>
             </div>
             <div className="flex items-center gap-3">
@@ -255,7 +253,7 @@ function PayContent({
 
           <div>
             <div className="mb-1.5 text-caption font-semibold text-foreground">
-              You pay
+              {t("pay.youPay")}
             </div>
             <CostBreakdown
               contribution={tanda.contribution}
@@ -270,7 +268,7 @@ function PayContent({
           <GuardArea
             tx={tx}
             required={total}
-            actionLabel={`Pay ${clamped} cycle${clamped === 1 ? "" : "s"}`}
+            actionLabel={payLabel}
             symbol={symbol}
             decimals={decimals}
           />

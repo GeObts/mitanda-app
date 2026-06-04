@@ -34,10 +34,12 @@ export function manageMessage(tanda: `0x${string}`): string {
 export function avatarMessage(
   address: `0x${string}`,
   photoHash: string,
+  name: string,
 ): string {
   return [
-    "Mi Tanda — set profile photo",
+    "Mi Tanda — set profile",
     `Wallet: ${address.toLowerCase()}`,
     `Photo: ${photoHash}`,
+    `Name: ${name}`,
   ].join("\n");
 }

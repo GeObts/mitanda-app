@@ -11,6 +11,7 @@ import {
 import { useQueryClient } from "@tanstack/react-query";
 
 import { activeChain, tandaContract } from "@/lib/contracts";
+import { BUILDER_DATA_SUFFIX } from "@/lib/app-mode";
 import { describeTxError } from "@/lib/tx-error";
 
 export type MarkDefaulterStatus =
@@ -55,6 +56,7 @@ export function useMarkDefaulter(tandaAddress: `0x${string}`) {
         functionName: "markDefaulter",
         args: [participant],
         chainId: activeChain.id,
+        dataSuffix: BUILDER_DATA_SUFFIX,
       });
     },
     [writeContract, tandaAddress],

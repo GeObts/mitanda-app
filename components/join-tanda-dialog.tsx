@@ -32,12 +32,8 @@ import { useTwoStepTx } from "@/lib/hooks/use-two-step-tx";
 import { useToken } from "@/lib/hooks/use-token";
 import { CostBreakdown, TwoStepProgress } from "@/components/tx-ui";
 import { EXPLORER_TX } from "@/lib/tx-error";
-import {
-  Banner,
-  GuardArea,
-  intervalLabel,
-  zeroAddr,
-} from "@/components/tx-shared";
+import { Banner, GuardArea, zeroAddr } from "@/components/tx-shared";
+import { useT, useIntervalLabel } from "@/lib/i18n";
 
 interface JoinDialogProps {
   open: boolean;
@@ -50,10 +46,11 @@ interface JoinDialogProps {
 /** Dashboard "Join a tanda" — opens the join-by-ID dialog. */
 export function JoinTandaButton() {
   const [open, setOpen] = useState(false);
+  const t = useT();
   return (
     <>
       <ActionButton variant="secondary" onClick={() => setOpen(true)}>
-        Join a tanda
+        {t("join.btn")}
       </ActionButton>
       <JoinTandaDialog open={open} onOpenChange={setOpen} />
     </>
@@ -90,6 +87,8 @@ function JoinContent({
   onDone: () => void;
 }) {
   const { address } = useAccount();
+  const t = useT();
+  const intervalLabel = useIntervalLabel();
   const [idInput, setIdInput] = useState(
     presetId != null ? String(presetId) : "",
   );
@@ -180,8 +179,8 @@ function JoinContent({
   if (tx.status === "success") {
     return (
       <SuccessPanel
-        title="You're in!"
-        body="You've joined the tanda and paid your first cycle. It now appears on your dashboard."
+        title={t("join.successTitle")}
+        body={t("join.successBody")}
         hash={tx.actionHash}
         onDone={onDone}
       />
@@ -196,16 +195,14 @@ function JoinContent({
     return (
       <div className="space-y-4">
         <DialogHeader>
-          <DialogTitle className="text-h2">Joining tanda</DialogTitle>
-          <DialogDescription>
-            Keep this open until both steps confirm.
-          </DialogDescription>
+          <DialogTitle className="text-h2">{t("join.joiningTitle")}</DialogTitle>
+          <DialogDescription>{t("join.joiningDesc")}</DialogDescription>
         </DialogHeader>
         <TwoStepProgress
           status={tx.status}
           errorPhase={tx.errorPhase}
           needsApproval={tx.needsApproval}
-          actionLabel="Join tanda (pay cycle 1)"
+          actionLabel={t("join.joinPayAction")}
           approveHash={tx.approveHash}
           actionHash={tx.actionHash}
           tokenSymbol={symbol}
@@ -217,11 +214,9 @@ function JoinContent({
   return (
     <div className="space-y-4">
       <DialogHeader>
-        <DialogTitle className="text-h2">Join a Tanda</DialogTitle>
+        <DialogTitle className="text-h2">{t("join.title")}</DialogTitle>
         <DialogDescription>
-          {presetAddress
-            ? "Join to claim your seat and activate this tanda."
-            : "Enter a tanda ID to see its terms and join."}
+          {presetAddress ? t("join.descPreset") : t("join.descEnter")}
         </DialogDescription>
       </DialogHeader>
 
@@ -235,7 +230,7 @@ function JoinContent({
       {!presetAddress && (
         <div className="space-y-1.5">
           <label className="text-caption font-semibold text-foreground">
-            Tanda ID
+            {t("join.idLabel")}
           </label>
           <input
             inputMode="numeric"
@@ -245,10 +240,10 @@ function JoinContent({
             className="w-full rounded-btn border border-border bg-background px-3 py-2.5 text-body text-foreground outline-none transition-colors placeholder:text-foreground-subtle focus:border-primary focus:ring-2 focus:ring-primary/20 dark:focus:border-accent dark:focus:ring-accent/20"
           />
           {idIsValid && resolving && (
-            <p className="text-caption text-foreground-muted">Looking up…</p>
+            <p className="text-caption text-foreground-muted">{t("join.lookingUp")}</p>
           )}
           {idIsValid && !resolving && !targetIsReal && (
-            <p className="text-caption text-danger">No tanda with that ID.</p>
+            <p className="text-caption text-danger">{t("join.noTanda")}</p>
           )}
         </div>
       )}
@@ -256,7 +251,7 @@ function JoinContent({
       {/* Terms */}
       {targetIsReal && loadingTerms && (
         <div className="flex items-center gap-2 rounded-btn bg-background-muted p-3 text-caption text-foreground-muted">
-          <Loader2 className="size-4 animate-spin" /> Loading tanda terms…
+          <Loader2 className="size-4 animate-spin" /> {t("join.loadingTerms")}
         </div>
       )}
 
@@ -264,18 +259,21 @@ function JoinContent({
         <>
           <div className="rounded-card bg-background-muted p-4">
             <div className="mb-2 flex items-center gap-1.5 text-caption font-semibold text-foreground">
-              <Users className="size-3.5" /> Tanda{presetId != null ? ` #${presetId}` : idInput ? ` #${idInput}` : ""} terms
+              <Users className="size-3.5" />{" "}
+              {t("join.terms", {
+                n: presetId != null ? ` #${presetId}` : idInput ? ` #${idInput}` : "",
+              })}
             </div>
             <dl className="grid grid-cols-2 gap-y-2 text-caption">
               <Term
-                label="Contribution"
+                label={t("join.contribution")}
                 value={`${fmtToken(terms.contribution, decimals)} ${symbol}`.trim()}
               />
-              <Term label="Payout interval" value={intervalLabel(terms.interval)} />
-              <Term label="Participants" value={`${terms.participantCount}`} />
+              <Term label={t("join.interval")} value={intervalLabel(terms.interval)} />
+              <Term label={t("join.participants")} value={`${terms.participantCount}`} />
               <Term
-                label="Slots left"
-                value={`${slotsRemaining} of ${terms.participantCount}`}
+                label={t("join.slotsLeft")}
+                value={t("join.slotsOf", { n: slotsRemaining, m: terms.participantCount })}
               />
             </dl>
           </div>
@@ -283,25 +281,25 @@ function JoinContent({
           {/* Status / blockers */}
           {terms.alreadyJoined ? (
             <Banner tone="muted" icon={<CheckCircle2 className="size-4" />}>
-              You&apos;re already a participant in this tanda.
+              {t("join.already")}
             </Banner>
           ) : !terms.isPublic ? (
             <Banner tone="muted" icon={<AlertTriangle className="size-4" />}>
-              This is a private (invite-only) tanda — you need an invite to join.
+              {t("join.privateBlock")}
             </Banner>
           ) : !isOpenState ? (
             <Banner tone="muted" icon={<AlertTriangle className="size-4" />}>
-              This tanda is no longer open to new members.
+              {t("join.notOpen")}
             </Banner>
           ) : slotsRemaining <= 0 ? (
             <Banner tone="muted" icon={<AlertTriangle className="size-4" />}>
-              This tanda is full.
+              {t("join.full")}
             </Banner>
           ) : (
             <>
               <div>
                 <div className="mb-1.5 text-caption font-semibold text-foreground">
-                  You pay now (cycle 1)
+                  {t("join.payNow")}
                 </div>
                 <CostBreakdown
                   contribution={terms.contribution}
@@ -314,7 +312,7 @@ function JoinContent({
               <GuardArea
                 tx={tx}
                 required={perCycle}
-                actionLabel="Join & pay cycle 1"
+                actionLabel={t("join.joinPay")}
                 symbol={symbol}
                 decimals={decimals}
               />
@@ -325,7 +323,7 @@ function JoinContent({
 
       {!address && (
         <Banner tone="muted" icon={<Wallet className="size-4" />}>
-          Connect your wallet (top right) to join.
+          {t("join.connect")}
         </Banner>
       )}
     </div>
@@ -352,6 +350,7 @@ function SuccessPanel({
   hash?: `0x${string}`;
   onDone: () => void;
 }) {
+  const t = useT();
   return (
     <div className="flex flex-col items-center gap-3 py-6 text-center">
       <CheckCircle2 className="size-10 text-success" />
@@ -364,7 +363,7 @@ function SuccessPanel({
           rel="noreferrer"
           className="font-mono text-caption text-accent underline"
         >
-          View transaction
+          {t("common.viewTx")}
         </a>
       )}
       <button
@@ -372,7 +371,7 @@ function SuccessPanel({
         onClick={onDone}
         className="mt-2 flex w-full items-center justify-center rounded-btn bg-primary px-5 py-3 text-h3 text-primary-foreground transition-colors hover:bg-primary-hover"
       >
-        Done
+        {t("common.done")}
       </button>
     </div>
   );

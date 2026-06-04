@@ -7,20 +7,23 @@ import { Loader2, Clock, ShieldCheck, AlertTriangle } from "lucide-react";
 import { activeChain } from "@/lib/contracts";
 import { useMarkDefaulter } from "@/lib/hooks/use-mark-defaulter";
 import type { UserTanda, UnpaidParticipant } from "@/lib/hooks/use-user-tandas";
+import { useT } from "@/lib/i18n";
+import type { TKey } from "@/lib/i18n/dict";
 
 const short = (a: `0x${string}`) => `${a.slice(0, 6)}…${a.slice(-4)}`;
 
-/** Friendly "grace ends …" label. In a module helper so the impure clock read
- * stays out of the render body (re-evaluated whenever the dashboard re-renders). */
-function graceLabel(unixSec: number): string {
+type TFn = (key: TKey, vars?: Record<string, string | number>) => string;
+
+/** Friendly "grace ends …" label (translated). */
+function graceLabel(unixSec: number, t: TFn): string {
   const diffMs = unixSec * 1000 - Date.now();
-  if (diffMs <= 0) return "now";
+  if (diffMs <= 0) return t("grace.now");
   const mins = Math.round(diffMs / 60000);
-  if (mins < 60) return `in ${mins} min`;
+  if (mins < 60) return t("grace.inMin", { n: mins });
   const hrs = Math.round(mins / 60);
-  if (hrs < 24) return `in ${hrs} hour${hrs === 1 ? "" : "s"}`;
+  if (hrs < 24) return t(hrs === 1 ? "grace.inHour" : "grace.inHours", { n: hrs });
   const days = Math.round(hrs / 24);
-  return `in ${days} day${days === 1 ? "" : "s"}`;
+  return t(days === 1 ? "grace.inDay" : "grace.inDays", { n: days });
 }
 
 /**
@@ -59,6 +62,7 @@ function DefaulterCard({
   tanda: UserTanda;
   unpaid: UnpaidParticipant[];
 }) {
+  const t = useT();
   const m = useMarkDefaulter(tanda.address);
   const [target, setTarget] = useState<`0x${string}` | null>(null);
   const anyPastGrace = unpaid.some((u) => u.pastGrace);
@@ -71,16 +75,12 @@ function DefaulterCard({
         </div>
         <div className="min-w-0 flex-1">
           <h2 className="text-h3 text-foreground">
-            {anyPastGrace
-              ? "A payment is holding up the payout"
-              : "Waiting on a payment"}
+            {anyPastGrace ? t("def.holdTitle") : t("def.waitTitle")}
           </h2>
           <p className="mt-0.5 text-caption text-foreground-muted">
-            Tanda #{tanda.id} cycle {tanda.currentCycle}{" "}
-            can&apos;t pay out until everyone&apos;s paid in.{" "}
             {anyPastGrace
-              ? "The grace period has passed — you can step in to keep things moving. Their insurance deposit covers the shortfall, so the honest members stay whole."
-              : "Give them a little longer to pay before anyone needs to step in."}
+              ? t("def.holdBody", { id: tanda.id, cycle: tanda.currentCycle })
+              : t("def.waitBody", { id: tanda.id, cycle: tanda.currentCycle })}
           </p>
         </div>
       </div>
@@ -99,8 +99,10 @@ function DefaulterCard({
                 <div className="space-y-2">
                   <div className="flex items-center gap-1.5 text-caption text-foreground-muted">
                     <Clock className="size-3.5 shrink-0" />
-                    <span className="font-mono">{short(u.address)}</span> missed
-                    cycle {tanda.currentCycle} and the grace period has passed.
+                    {t("def.missed", {
+                      addr: short(u.address),
+                      cycle: tanda.currentCycle,
+                    })}
                   </div>
                   {m.isWrongNetwork ? (
                     <button
@@ -110,7 +112,7 @@ function DefaulterCard({
                       className="flex w-full items-center justify-center gap-2 rounded-btn bg-primary px-5 py-2.5 text-caption font-semibold text-primary-foreground transition-colors hover:bg-primary-hover disabled:opacity-70"
                     >
                       {m.isSwitching && <Loader2 className="size-4 animate-spin" />}
-                      Switch to {activeChain.name}
+                      {t("common.switchTo", { chain: activeChain.name })}
                     </button>
                   ) : (
                     <button
@@ -125,12 +127,12 @@ function DefaulterCard({
                       {busy ? (
                         <>
                           <Loader2 className="size-4 animate-spin" />
-                          {m.status === "signing" ? "Confirm in your wallet…" : "Marking…"}
+                          {m.status === "signing" ? t("common.confirmWallet") : t("def.marking")}
                         </>
                       ) : (
                         <>
                           <ShieldCheck className="size-4" />
-                          Mark {short(u.address)} as defaulter
+                          {t("def.markBtn", { addr: short(u.address) })}
                         </>
                       )}
                     </button>
@@ -140,9 +142,11 @@ function DefaulterCard({
                 <div className="flex items-center gap-1.5 text-caption text-foreground-muted">
                   <Clock className="size-3.5 shrink-0 text-warning" />
                   <span>
-                    Waiting on <span className="font-mono">{short(u.address)}</span>{" "}
-                    to pay cycle {tanda.currentCycle} — grace period ends{" "}
-                    {graceLabel(u.graceExpiresAt)}.
+                    {t("def.waiting", {
+                      addr: short(u.address),
+                      cycle: tanda.currentCycle,
+                      when: graceLabel(u.graceExpiresAt, t),
+                    })}
                   </span>
                 </div>
               )}

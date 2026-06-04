@@ -13,6 +13,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { parseEventLogs } from "viem";
 
 import { activeChain, erc20, mitanda, ManagerAbi } from "@/lib/contracts";
+import { BUILDER_DATA_SUFFIX } from "@/lib/app-mode";
 import { describeTxError } from "@/lib/tx-error";
 import type { CreateTandaArgs } from "@/lib/tanda-form";
 
@@ -101,6 +102,7 @@ export function useCreateTanda({
       ...mitanda.manager,
       functionName: "createTanda",
       chainId: activeChain.id,
+      dataSuffix: BUILDER_DATA_SUFFIX,
       args: [
         p.token,
         p.args.contributionAmount,
@@ -124,6 +126,7 @@ export function useCreateTanda({
           functionName: "approve",
           args: [mitanda.manager.address, charge],
           chainId: activeChain.id,
+          dataSuffix: BUILDER_DATA_SUFFIX,
         });
       } else {
         fireCreate();

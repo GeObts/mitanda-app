@@ -1,25 +1,27 @@
 "use client";
 
-import { Users, Clock, Gift } from "lucide-react";
+import Link from "next/link";
+import { Users, Clock, Gift, ArrowRight } from "lucide-react";
 
 import { fmtToken, TandaState } from "@/lib/contracts";
-import { intervalLabel } from "@/components/tx-shared";
 import { useToken } from "@/lib/hooks/use-token";
 import type { UserTanda } from "@/lib/hooks/use-user-tandas";
 import { ClaimButton } from "@/components/claim";
 import { PayTandaButton } from "@/components/pay-tanda-dialog";
+import { useT, useIntervalLabel } from "@/lib/i18n";
+import type { TKey } from "@/lib/i18n/dict";
 
-const STATE_META: Record<TandaState, { label: string; cls: string }> = {
+const STATE_META: Record<TandaState, { key: TKey; cls: string }> = {
   [TandaState.OPEN]: {
-    label: "Filling",
+    key: "status.filling",
     cls: "bg-primary-soft text-primary dark:text-accent",
   },
   [TandaState.ACTIVE]: {
-    label: "Active",
+    key: "status.active",
     cls: "bg-success/15 text-success",
   },
   [TandaState.COMPLETED]: {
-    label: "Completed",
+    key: "status.completed",
     cls: "bg-background-muted text-foreground-muted",
   },
 };
@@ -31,6 +33,8 @@ const STATE_META: Record<TandaState, { label: string; cls: string }> = {
  * grid around it controls the columns.
  */
 export function TandaSummaryCard({ tanda }: { tanda: UserTanda }) {
+  const t = useT();
+  const intervalLabel = useIntervalLabel();
   const { token } = useToken(tanda.tokenAddress);
   const symbol = token?.symbol ?? "";
   const decimals = token?.decimals ?? 6;
@@ -49,13 +53,13 @@ export function TandaSummaryCard({ tanda }: { tanda: UserTanda }) {
         <span
           className={`rounded-pill px-2.5 py-0.5 text-caption font-medium ${meta.cls}`}
         >
-          {meta.label}
+          {t(meta.key)}
         </span>
       </div>
 
       <div className="mt-3">
         <div className="text-caption text-foreground-subtle">
-          Contribution per round
+          {t("card.contributionPerRound")}
         </div>
         <div className="text-h2 text-foreground">
           {fmtToken(tanda.contributionAmount, decimals)}{" "}
@@ -66,13 +70,13 @@ export function TandaSummaryCard({ tanda }: { tanda: UserTanda }) {
       <dl className="mt-3 space-y-2 text-caption">
         <Row
           icon={<Clock className="size-3.5" />}
-          label="Payout"
+          label={t("card.payout")}
           value={intervalLabel(tanda.payoutInterval)}
         />
         <Row
           icon={<Users className="size-3.5" />}
-          label="Your status"
-          value={tanda.isActive ? "Active member" : "Member"}
+          label={t("card.yourStatus")}
+          value={t(tanda.isActive ? "card.activeMember" : "card.member")}
         />
       </dl>
 
@@ -80,7 +84,7 @@ export function TandaSummaryCard({ tanda }: { tanda: UserTanda }) {
       {tanda.state !== TandaState.OPEN && (
         <div className="mt-3">
           <div className="mb-1 flex items-center justify-between text-caption text-foreground-subtle">
-            <span>Rounds paid out</span>
+            <span>{t("card.roundsPaidOut")}</span>
             <span className="font-medium text-foreground">
               {tanda.cyclesCompleted}/{tanda.totalCycles}
             </span>
@@ -99,7 +103,10 @@ export function TandaSummaryCard({ tanda }: { tanda: UserTanda }) {
         {tanda.claimable > 0n && (
           <div className="flex items-center gap-1.5 rounded-btn bg-success/10 px-3 py-2 text-caption font-medium text-success">
             <Gift className="size-3.5" />
-            {fmtToken(tanda.claimable, decimals)} {symbol} ready to claim
+            {t("common.readyToClaim", {
+              amt: fmtToken(tanda.claimable, decimals),
+              sym: symbol,
+            })}
           </div>
         )}
         {tanda.claimable > 0n && (
@@ -124,14 +131,22 @@ export function TandaSummaryCard({ tanda }: { tanda: UserTanda }) {
         )}
         {tanda.state === TandaState.ACTIVE && fullyPaid && tanda.claimable === 0n && (
           <div className="rounded-btn bg-background-muted px-3 py-2 text-center text-caption font-medium text-foreground-muted">
-            You&apos;re paid up
+            {t("card.paidUp")}
           </div>
         )}
         {tanda.state === TandaState.OPEN && (
           <div className="rounded-btn bg-background-muted px-3 py-2 text-center text-caption font-medium text-foreground-muted">
-            Waiting for the circle to fill
+            {t("card.waitingFill")}
           </div>
         )}
+        <Link
+          href={`/tandas/${tanda.id}`}
+          prefetch
+          className="flex w-full items-center justify-center gap-1.5 rounded-btn border border-border px-4 py-2.5 text-caption font-semibold text-foreground transition-colors hover:bg-background-muted"
+        >
+          {t("card.viewCircle")}
+          <ArrowRight className="size-3.5" />
+        </Link>
       </div>
     </div>
   );

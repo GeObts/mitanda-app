@@ -1,6 +1,38 @@
 "use client";
 
-import { useAvatar } from "@/lib/hooks/use-avatar";
+import { useAvatar, useProfile } from "@/lib/hooks/use-avatar";
+import { useT } from "@/lib/i18n";
+
+/** Truncated wallet address, the fallback when no display name is set. */
+export const shortAddr = (a: string) => `${a.slice(0, 6)}…${a.slice(-4)}`;
+
+/**
+ * A member's display name (off-chain) with a truncated-address fallback, plus an
+ * optional "You" chip. Reads from the shared profile cache (seed it once per
+ * roster with useProfiles).
+ */
+export function MemberName({
+  address,
+  you = false,
+  className = "",
+}: {
+  address: string;
+  you?: boolean;
+  className?: string;
+}) {
+  const { name } = useProfile(address);
+  const t = useT();
+  return (
+    <span className={`inline-flex items-center gap-1.5 ${className}`}>
+      <span className="truncate">{name || shortAddr(address)}</span>
+      {you && (
+        <span className="shrink-0 rounded-pill bg-primary-soft px-1.5 py-0.5 text-[0.65rem] font-semibold uppercase tracking-wide text-primary dark:text-accent">
+          {t("common.you")}
+        </span>
+      )}
+    </span>
+  );
+}
 
 /**
  * A wallet's profile photo. Shows the uploaded image when one exists, otherwise

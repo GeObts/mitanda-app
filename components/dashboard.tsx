@@ -2,8 +2,9 @@
 
 import { Plus, Clock, Wallet, Loader2 } from "lucide-react";
 import { usePrivy } from "@privy-io/react-auth";
+import { useAccount } from "wagmi";
 
-import { usePrivyConfigured } from "@/app/providers";
+import { useAuthMode } from "@/app/providers";
 import { AppBar } from "@/components/mt/app-bar";
 import { StatRing } from "@/components/mt/stat-ring";
 import { MetricCard } from "@/components/mt/metric-card";
@@ -20,15 +21,19 @@ import { PublicTandasStrip } from "@/components/public-tandas-strip";
 import { useUserTandas, type DashboardData } from "@/lib/hooks/use-user-tandas";
 import { useToken } from "@/lib/hooks/use-token";
 import { fmtToken, activeChain } from "@/lib/contracts";
+import { useT } from "@/lib/i18n";
+import type { TKey } from "@/lib/i18n/dict";
 
-function relativeDue(ts: number | null): string {
-  if (ts === null) return "All paid up";
+type TFn = (key: TKey, vars?: Record<string, string | number>) => string;
+
+function relativeDue(ts: number | null, t: TFn): string {
+  if (ts === null) return t("due.allPaid");
   const diffMs = ts * 1000 - Date.now();
-  if (diffMs <= 0) return "Overdue";
+  if (diffMs <= 0) return t("due.overdue");
   const h = Math.round(diffMs / 3_600_000);
-  if (h < 24) return `Due in ${h} hour${h === 1 ? "" : "s"}`;
+  if (h < 24) return t(h === 1 ? "due.inHour" : "due.inHours", { n: h });
   const d = Math.round(h / 24);
-  return `Due in ${d} day${d === 1 ? "" : "s"}`;
+  return t(d === 1 ? "due.inDay" : "due.inDays", { n: d });
 }
 
 function pct(part: number, whole: number) {
@@ -53,26 +58,42 @@ export function Dashboard() {
 }
 
 /**
- * Gate the connected dashboard on Privy's auth state — the SAME signal the
- * header's ConnectButton uses. We deliberately do NOT gate on wagmi's
- * isConnected/address: wagmi can auto-reconnect a previously-connected injected
- * wallet in the background, independent of Privy auth, which would flash the
- * dashboard while the user is not signed in.
+ * Gate the connected dashboard on the active auth stack:
+ *   - web (Privy): gate on Privy's auth state — the SAME signal the header's
+ *     ConnectButton uses. We deliberately do NOT gate on wagmi's
+ *     isConnected/address here, because wagmi can auto-reconnect a
+ *     previously-connected injected wallet in the background, independent of
+ *     Privy auth, which would flash the dashboard while signed out.
+ *   - Base App (Base Account): there IS no Privy — the wagmi connection (the
+ *     host wallet, auto-connected inside the Base App) IS the auth signal, so
+ *     we gate on isConnected.
  */
 function DashboardGate() {
-  const configured = usePrivyConfigured();
-  // Without Privy there is no real auth — show the signed-out view (which still
-  // surfaces public discovery).
-  if (!configured) return <SignedOutView />;
+  const mode = useAuthMode();
+  if (mode === "base") return <BaseGatedBody />;
+  // No Privy App ID (web build) → no real auth; show the signed-out view (which
+  // still surfaces public discovery).
+  if (mode !== "privy") return <SignedOutView />;
   return <PrivyGatedBody />;
 }
 
-// usePrivy may only be called inside <PrivyProvider>, mounted only when
-// configured — so this lives in its own component rendered in that branch.
+// usePrivy may only be called inside <PrivyProvider>, mounted only in the web
+// build — so this lives in its own component rendered in that branch.
 function PrivyGatedBody() {
   const { ready, authenticated } = usePrivy();
   if (!ready) return <CenteredSpinner />;
   if (!authenticated) return <SignedOutView />;
+  return <ConnectedDashboard />;
+}
+
+// Base App build: the wagmi connection (auto-connected host wallet) is the auth
+// signal. Show a spinner while the connector is (re)connecting on first load.
+function BaseGatedBody() {
+  const { isConnected, status } = useAccount();
+  if (status === "connecting" || status === "reconnecting") {
+    return <CenteredSpinner />;
+  }
+  if (!isConnected) return <SignedOutView />;
   return <ConnectedDashboard />;
 }
 
@@ -104,15 +125,15 @@ function ConnectedDashboard() {
 
 /** Signed-out gate card. */
 function SignInGate() {
+  const t = useT();
   return (
     <div className="mx-auto max-w-xl rounded-card bg-background-card p-8 text-center shadow-card md:p-12">
       <div className="mx-auto mb-4 flex size-12 items-center justify-center rounded-btn bg-primary-soft text-primary dark:text-accent">
         <Wallet className="size-6" />
       </div>
-      <h2 className="text-h1">Sign in to get started</h2>
+      <h2 className="text-h1">{t("dash.signInTitle")}</h2>
       <p className="mx-auto mt-2 max-w-sm text-body text-foreground-muted">
-        Sign in to see your tandas, payments, and progress — or browse the open
-        circles below and join one.
+        {t("dash.signInBody")}
       </p>
       <div className="mt-5 flex justify-center">
         <ConnectButton />
@@ -122,13 +143,14 @@ function SignInGate() {
 }
 
 function DashboardBody({ data }: { data: DashboardData }) {
+  const t = useT();
   switch (data.status) {
     case "disconnected":
       return (
         <EmptyCard
           icon={<Wallet className="size-6" />}
-          title="Sign in to get started"
-          body="Sign in to see your tandas, payments, and progress."
+          title={t("dash.signInTitle")}
+          body={t("dash.signInBody")}
         />
       );
     case "loading":
@@ -137,8 +159,8 @@ function DashboardBody({ data }: { data: DashboardData }) {
       return (
         <EmptyCard
           icon={<Clock className="size-6" />}
-          title="Couldn't reach the network"
-          body={`We couldn't read your tandas from ${activeChain.name}. Check your connection and try again.`}
+          title={t("dash.netErrTitle")}
+          body={t("dash.netErrBody", { chain: activeChain.name })}
         />
       );
     case "empty":
@@ -149,6 +171,7 @@ function DashboardBody({ data }: { data: DashboardData }) {
 }
 
 function ReadyState({ data }: { data: DashboardData }) {
+  const t = useT();
   const { primary, activeCount, joinedCount } = data;
 
   // The primary tanda's contribution token — render amounts in its symbol/decimals.
@@ -174,23 +197,23 @@ function ReadyState({ data }: { data: DashboardData }) {
             aria-hidden
             className="pointer-events-none absolute -right-16 -top-16 size-48 rounded-full bg-primary/5 blur-3xl dark:bg-accent/10"
           />
-          <h2 className="relative mb-4 text-h2">Overview</h2>
+          <h2 className="relative mb-4 text-h2">{t("dash.overview")}</h2>
           <div className="relative flex justify-around">
             <StatRing
               percent={pct(cyclesDone, cyclesTotal)}
-              label="Cycles"
+              label={t("dash.cycles")}
               value={`${cyclesDone} / ${cyclesTotal}`}
               colorScheme="primary"
             />
             <StatRing
               percent={pct(paidUntil, cyclesTotal)}
-              label="Paid"
-              value={fullyPaid ? "Up to date" : `${fmtUsdc(perCycle)} ${symbol}`.trim()}
+              label={t("dash.paid")}
+              value={fullyPaid ? t("dash.upToDate") : `${fmtUsdc(perCycle)} ${symbol}`.trim()}
               colorScheme={fullyPaid ? "success" : "warning"}
             />
             <StatRing
               percent={pct(activeCount, joinedCount)}
-              label="Active"
+              label={t("dash.activeStat")}
               value={`${activeCount} / ${joinedCount}`}
               colorScheme="success"
             />
@@ -200,11 +223,11 @@ function ReadyState({ data }: { data: DashboardData }) {
         {primary ? (
           <div className="space-y-3">
             <MetricCard
-              title="Next payment due"
+              title={t("dash.nextPaymentDue")}
               value={Number(fmtUsdc(fullyPaid ? 0n : perCycle))}
               max={Number(fmtUsdc(perCycle)) || 1}
               unit={symbol}
-              helperText={`Tanda #${primary.id} · ${relativeDue(primary.nextDueTimestamp)}`}
+              helperText={`Tanda #${primary.id} · ${relativeDue(primary.nextDueTimestamp, t)}`}
               helperIcon={<Clock className="size-3.5" />}
             />
             {primary.claimable > 0n && (
@@ -234,26 +257,26 @@ function ReadyState({ data }: { data: DashboardData }) {
           always fills the width with intent (no empty columns). */}
       <section>
         <div className="mb-4 flex items-baseline justify-between">
-          <h2 className="text-h2">Your tandas</h2>
+          <h2 className="text-h2">{t("dash.yourTandas")}</h2>
           <span className="text-caption text-foreground-muted">
-            {joinedCount} total
+            {t("dash.total", { n: joinedCount })}
           </span>
         </div>
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-          {data.tandas.map((t) => (
-            <TandaSummaryCard key={t.id} tanda={t} />
+          {data.tandas.map((tanda) => (
+            <TandaSummaryCard key={tanda.id} tanda={tanda} />
           ))}
           <QuickActionCard
             icon={<Plus className="size-5" />}
-            title="Start a new circle"
-            body="Set the amount and invite your people."
+            title={t("dash.startCircle")}
+            body={t("dash.startCircleBody")}
           >
             <CreateTandaButton />
           </QuickActionCard>
           <QuickActionCard
             icon={<Wallet className="size-5" />}
-            title="Join with an ID or invite"
-            body="Have a tanda ID or invite link? Join here."
+            title={t("dash.joinIdInvite")}
+            body={t("dash.joinIdInviteBody")}
           >
             <JoinTandaButton />
           </QuickActionCard>
@@ -288,16 +311,16 @@ function QuickActionCard({
 }
 
 function EmptyState() {
+  const t = useT();
   return (
     <div className="space-y-6">
       <div className="mx-auto max-w-xl rounded-card bg-background-card p-8 text-center shadow-card md:p-12">
         <div className="mx-auto mb-4 flex size-12 items-center justify-center rounded-btn bg-primary-soft text-primary dark:text-accent">
           <Plus className="size-6" />
         </div>
-        <h2 className="text-h1">No tandas yet</h2>
+        <h2 className="text-h1">{t("dash.noTandasTitle")}</h2>
         <p className="mx-auto mt-2 max-w-sm text-body text-foreground-muted">
-          You don&apos;t have any tandas yet — create one to get started, join
-          one with an invite, or pick an open circle below.
+          {t("dash.noTandasBody")}
         </p>
         <div className="mx-auto mt-5 grid max-w-sm grid-cols-2 gap-3">
           <CreateTandaButton />

@@ -11,6 +11,7 @@ import {
 import { useQueryClient } from "@tanstack/react-query";
 
 import { activeChain, tandaContract } from "@/lib/contracts";
+import { BUILDER_DATA_SUFFIX } from "@/lib/app-mode";
 import { describeTxError } from "@/lib/tx-error";
 
 export type ReleaseStatus =
@@ -57,6 +58,7 @@ export function useReleasePayout(
       ...tandaContract(tandaAddress),
       functionName: "triggerPayout",
       chainId: activeChain.id,
+      dataSuffix: BUILDER_DATA_SUFFIX,
     });
   }, [isWrongNetwork, release, tandaAddress]);
 
@@ -71,6 +73,7 @@ export function useReleasePayout(
           ...tandaContract(tandaAddress),
           functionName: "withdraw",
           chainId: activeChain.id,
+          dataSuffix: BUILDER_DATA_SUFFIX,
         });
       } else if (!andClaim) {
         queryClient.invalidateQueries();

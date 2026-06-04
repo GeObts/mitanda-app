@@ -2,21 +2,29 @@
 
 import { useEffect, useRef, useState } from "react";
 import { usePrivy } from "@privy-io/react-auth";
-import { useAccount } from "wagmi";
+import { useAccount, useConnect, useDisconnect } from "wagmi";
 import { LogOut, Wallet, ChevronDown, Copy, Check } from "lucide-react";
 
-import { usePrivyConfigured } from "@/app/providers";
+import { useAuthMode } from "@/app/providers";
+import { useT } from "@/lib/i18n";
 
 function truncate(addr: string) {
   return `${addr.slice(0, 5)}…${addr.slice(-4)}`;
 }
 
-// Privy hooks may only be called inside <PrivyProvider>, which is only mounted
-// when an App ID is configured — so this lives in its own component that's
-// rendered only in the configured branch.
-function PrivyConnect() {
-  const { ready, authenticated, login, logout } = usePrivy();
-  const { address } = useAccount();
+/**
+ * Connected-state pill (status dot + short address + chevron) with a menu that
+ * shows the full address and a Disconnect action. Shared by the Privy and Base
+ * Account flows so the header looks identical in both builds.
+ */
+function ConnectedPill({
+  address,
+  onDisconnect,
+}: {
+  address?: `0x${string}`;
+  onDisconnect: () => void;
+}) {
+  const t = useT();
   const [menuOpen, setMenuOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -43,30 +51,6 @@ function PrivyConnect() {
     }
   }
 
-  if (!ready) {
-    return (
-      <span className="flex h-10 items-center rounded-btn bg-background-muted px-3 text-caption font-medium text-foreground-muted">
-        …
-      </span>
-    );
-  }
-
-  if (!authenticated) {
-    return (
-      <button
-        type="button"
-        onClick={() => login()}
-        className="flex h-10 items-center gap-1.5 rounded-btn bg-primary px-3 text-caption font-semibold text-primary-foreground transition-colors hover:bg-primary-hover"
-      >
-        <Wallet className="size-4" />
-        <span>Sign in</span>
-      </button>
-    );
-  }
-
-  // Connected: one compact pill (status dot + short address + chevron) that
-  // opens a small menu with the full address and Disconnect — keeps the header
-  // narrow so the brand name never truncates.
   return (
     <div ref={ref} className="relative min-w-0">
       <button
@@ -91,7 +75,7 @@ function PrivyConnect() {
           {address && (
             <div className="px-2 py-1.5">
               <div className="text-caption text-foreground-subtle">
-                Connected wallet
+                {t("connect.connectedWallet")}
               </div>
               <div className="break-all font-mono text-caption text-foreground">
                 {address}
@@ -107,12 +91,12 @@ function PrivyConnect() {
             {copied ? (
               <>
                 <Check className="size-3.5 text-success" />
-                <span className="text-success">Copied!</span>
+                <span className="text-success">{t("connect.copied")}</span>
               </>
             ) : (
               <>
                 <Copy className="size-3.5 text-foreground-muted" />
-                Copy address
+                {t("connect.copyAddress")}
               </>
             )}
           </button>
@@ -121,12 +105,12 @@ function PrivyConnect() {
             role="menuitem"
             onClick={() => {
               setMenuOpen(false);
-              logout();
+              onDisconnect();
             }}
             className="flex w-full items-center gap-2 rounded-[10px] px-2 py-2 text-caption font-medium text-danger transition-colors hover:bg-background-muted"
           >
             <LogOut className="size-3.5" />
-            Disconnect
+            {t("connect.disconnect")}
           </button>
         </div>
       )}
@@ -134,7 +118,80 @@ function PrivyConnect() {
   );
 }
 
-// Icon-only when Privy isn't configured, so it doesn't crowd the header title.
+function SignInButton({
+  onClick,
+  disabled,
+}: {
+  onClick: () => void;
+  disabled?: boolean;
+}) {
+  const t = useT();
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={disabled}
+      className="flex h-10 items-center gap-1.5 rounded-btn bg-primary px-3 text-caption font-semibold text-primary-foreground transition-colors hover:bg-primary-hover disabled:opacity-60"
+    >
+      <Wallet className="size-4" />
+      <span>{t("common.signIn")}</span>
+    </button>
+  );
+}
+
+// Privy hooks may only be called inside <PrivyProvider>, which is only mounted
+// in the web build — so this lives in its own component rendered only there.
+function PrivyConnect() {
+  const { ready, authenticated, login, logout } = usePrivy();
+  const { address } = useAccount();
+
+  if (!ready) {
+    return (
+      <span className="flex h-10 items-center rounded-btn bg-background-muted px-3 text-caption font-medium text-foreground-muted">
+        …
+      </span>
+    );
+  }
+
+  if (!authenticated) return <SignInButton onClick={() => login()} />;
+
+  return <ConnectedPill address={address} onDisconnect={() => logout()} />;
+}
+
+// Base App build: connect via the Base Account / mini-app wallet. Inside the
+// Base App the host wallet auto-connects (see BaseAutoConnect in providers), so
+// the connected pill shows immediately; in a normal browser the button triggers
+// "Sign in with Base".
+function BaseConnect() {
+  const { address, isConnected, isConnecting, isReconnecting } = useAccount();
+  const { connect, connectors, isPending } = useConnect();
+  const { disconnect } = useDisconnect();
+
+  if (isReconnecting) {
+    return (
+      <span className="flex h-10 items-center rounded-btn bg-background-muted px-3 text-caption font-medium text-foreground-muted">
+        …
+      </span>
+    );
+  }
+
+  if (!isConnected) {
+    // Prefer the Base Account connector for the in-browser sign-in flow.
+    const connector =
+      connectors.find((c) => c.id === "baseAccount") ?? connectors[0];
+    return (
+      <SignInButton
+        onClick={() => connector && connect({ connector })}
+        disabled={isConnecting || isPending}
+      />
+    );
+  }
+
+  return <ConnectedPill address={address} onDisconnect={() => disconnect()} />;
+}
+
+// Icon-only when no auth is available (web build with no Privy App ID), so it
+// doesn't crowd the header title.
 function UnconfiguredConnect() {
   return (
     <button
@@ -151,6 +208,8 @@ function UnconfiguredConnect() {
 
 /** Wallet connect / login entry point for the dashboard header. */
 export function ConnectButton() {
-  const configured = usePrivyConfigured();
-  return configured ? <PrivyConnect /> : <UnconfiguredConnect />;
+  const mode = useAuthMode();
+  if (mode === "base") return <BaseConnect />;
+  if (mode === "privy") return <PrivyConnect />;
+  return <UnconfiguredConnect />;
 }

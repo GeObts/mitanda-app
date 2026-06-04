@@ -61,6 +61,13 @@
   --color-mint: color-mix(in srgb, var(--accent) 12%, var(--background));
   --color-mint-text: var(--foreground);
 
+  /* Card elevation — theme-aware (raw values live in :root / .dark as
+     --card-shadow). Light: a soft, real drop shadow + 1px hairline ring so
+     white cards float on the off-white page. Dark: a light-toned hairline ring
+     (shadows don't read on dark) so surfaces read as deliberately elevated. */
+  --shadow-card: var(--card-shadow);
+  --shadow-card-hover: var(--card-shadow-hover);
+
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -76,18 +83,18 @@
      Token values are locked to the exact Base swatches; do not interpolate
      new shades. Gray references in comments are Base's gray ramp.
      ─────────────────────────────────────────────────────────────────────── */
-  --background: #ffffff; /* Gray 0 — page background */
+  --background: #f4f5f8; /* subtle cool off-white — lets white cards float */
   --foreground: #0a0b0d; /* Gray 100 — text primary */
-  --card: #ffffff; /* Gray 0 — cards */
+  --card: #ffffff; /* Gray 0 — cards stay pure white */
   --card-foreground: #0a0b0d;
   --popover: #ffffff;
   --popover-foreground: #0a0b0d;
-  --primary: #0000ff; /* Base Blue — primary / action fills */
+  --primary: #0000ff; /* Base Blue — primary / action fills (light) */
   --primary-foreground: #ffffff; /* text on primary */
-  --secondary: #eef0f3; /* Gray 10 — subtle card alt */
+  --secondary: #eceef2; /* Gray 10 — subtle card alt */
   --secondary-foreground: #0a0b0d;
-  --muted: #eef0f3; /* Gray 10 */
-  --muted-foreground: #717886; /* Gray 50 — text secondary */
+  --muted: #eceef2; /* Gray 10 */
+  --muted-foreground: #696f7d; /* Gray 50+ — text secondary (AA on white) */
   --accent: #3c8aff; /* Cerulean — supporting accent */
   --accent-foreground: #0a0b0d; /* dark text on cerulean (AA) */
   --destructive: #fc401f; /* Red — danger */
@@ -111,36 +118,49 @@
 
   /* Bento extended — LIGHT */
   --background-card: #ffffff; /* Gray 0 */
-  --background-muted: #eef0f3; /* Gray 10 */
-  --foreground-muted: #717886; /* Gray 50 — text secondary */
+  --background-muted: #eceef2; /* Gray 10 */
+  --foreground-muted: #696f7d; /* Gray 50+ — text secondary */
   --foreground-subtle: #5b616e; /* Gray 60 — text tertiary */
   --border-strong: #b1b7c3; /* Gray 30 — stronger border */
+
+  /* Card elevation — soft real shadow + 1px hairline ring, so pure-white cards
+     read clearly as raised surfaces on the off-white page. */
+  --card-shadow:
+    0 0 0 1px rgba(16, 24, 40, 0.05),
+    0 1px 2px 0 rgba(16, 24, 40, 0.04),
+    0 6px 16px -4px rgba(16, 24, 40, 0.08);
+  --card-shadow-hover:
+    0 0 0 1px rgba(16, 24, 40, 0.07),
+    0 2px 4px 0 rgba(16, 24, 40, 0.05),
+    0 14px 32px -6px rgba(16, 24, 40, 0.13);
 }
 
 .dark {
   /* ───────────────────────────────────────────────────────────────────────
-     Base brand palette — DARK theme.
-     Primary fills stay Base Blue with white text; blue *text / links /
-     outlines* switch to Cerulean (pure Base Blue fails contrast on dark).
-     Status colors (green/yellow/red) are bright enough to stay as-is.
+     DARK theme — rebuilt for proper layering (Stripe/Mercury-style).
+     A charcoal base, card surfaces a clear step lighter, and subtle light-toned
+     borders carry elevation (drop shadows don't read on dark). The interactive
+     colour is Cerulean #3C8AFF for ALL fills / links / buttons — pure Base Blue
+     #0000FF is too harsh on a dark surface. Text on cerulean fills is a deep
+     near-black for high contrast. Text is a softened near-white, not pure #fff.
      ─────────────────────────────────────────────────────────────────────── */
-  --background: #0a0b0d; /* Gray 100 — page background */
-  --foreground: #ffffff; /* text primary */
-  --card: #32353d; /* Gray 80 — cards */
-  --card-foreground: #ffffff;
-  --popover: #32353d;
-  --popover-foreground: #ffffff;
-  --primary: #0000ff; /* Base Blue — primary fills stay */
-  --primary-foreground: #ffffff;
-  --secondary: #32353d; /* Gray 80 */
-  --secondary-foreground: #ffffff;
-  --muted: #32353d;
-  --muted-foreground: #b1b7c3; /* Gray 30 — text secondary */
-  --accent: #3c8aff; /* Cerulean — blue text/links/outlines on dark */
-  --accent-foreground: #0a0b0d;
-  --destructive: #fc401f; /* Red — danger (unchanged) */
-  --border: #5b616e; /* Gray 60 — border */
-  --input: #5b616e;
+  --background: #0d0f14; /* charcoal base (not pure black) */
+  --foreground: #f3f5f9; /* softened near-white — primary text */
+  --card: #171a21; /* surface — a clear step lighter than the base */
+  --card-foreground: #f3f5f9;
+  --popover: #1b1f27;
+  --popover-foreground: #f3f5f9;
+  --primary: #3c8aff; /* Cerulean — interactive fills / links / buttons */
+  --primary-foreground: #08111d; /* deep near-black text on cerulean (~6:1) */
+  --secondary: #1f232c; /* raised muted surface */
+  --secondary-foreground: #f3f5f9;
+  --muted: #1f232c;
+  --muted-foreground: #98a1b2; /* secondary text — AA on card + base */
+  --accent: #3c8aff; /* Cerulean accent (same family as primary) */
+  --accent-foreground: #08111d; /* deep near-black text on cerulean */
+  --destructive: #ff5a41; /* Red — brightened so it reads on charcoal */
+  --border: #2a3038; /* subtle light-toned border — carries elevation */
+  --input: #2a3038;
   --ring: #3c8aff; /* Cerulean — focus ring (dark) */
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
@@ -157,11 +177,20 @@
   --sidebar-ring: oklch(0.556 0 0);
 
   /* Bento extended — DARK */
-  --background-card: #32353d; /* Gray 80 */
-  --background-muted: #32353d; /* Gray 80 */
-  --foreground-muted: #b1b7c3; /* Gray 30 — text secondary */
-  --foreground-subtle: #b1b7c3; /* Gray 30 — keep readable on Gray 80 (AA) */
-  --border-strong: #717886; /* Gray 50 — stronger border */
+  --background-card: #171a21; /* surface (matches --card) */
+  --background-muted: #1f232c; /* raised muted surface (inputs, skeletons) */
+  --foreground-muted: #98a1b2; /* secondary text */
+  --foreground-subtle: #828c9e; /* tertiary text */
+  --border-strong: #3a414f; /* stronger border / divider */
+
+  /* Card elevation — a light-toned hairline ring (shadows don't read on dark)
+     plus a faint depth shadow, so surfaces read as deliberately raised. */
+  --card-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.06),
+    0 1px 2px 0 rgba(0, 0, 0, 0.5);
+  --card-shadow-hover:
+    0 0 0 1px rgba(255, 255, 255, 0.1),
+    0 6px 20px -4px rgba(0, 0, 0, 0.6);
 }
 
 /* Bento-specific design tokens (extend, not override, the shadcn base above).
@@ -184,9 +213,8 @@
   --radius-btn: 12px;
   --radius-pill: 999px;
 
-  /* Shadows */
-  --shadow-card: 0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px 0 rgba(0, 0, 0, 0.02);
-  --shadow-card-hover: 0 4px 12px 0 rgba(0, 0, 0, 0.06);
+  /* Shadows are theme-aware — see --shadow-card in @theme inline (raw values in
+     :root / .dark as --card-shadow). */
 
   /* Typography scale */
   --text-display: 2.25rem;

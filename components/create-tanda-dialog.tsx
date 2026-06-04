@@ -33,16 +33,16 @@ import {
 } from "@/lib/tanda-form";
 
 /** Friendly duration: total length = totalCycles × intervalDays. */
-function humanizeDays(totalDays: number): string {
+function humanizeDays(totalDays: number, t: TFn): string {
   if (totalDays % 30 === 0) {
     const m = totalDays / 30;
-    return `~${m} month${m === 1 ? "" : "s"}`;
+    return t(m === 1 ? "create.durMonth" : "create.durMonths", { n: m });
   }
   if (totalDays % 7 === 0) {
     const w = totalDays / 7;
-    return `~${w} week${w === 1 ? "" : "s"}`;
+    return t(w === 1 ? "create.durWeek" : "create.durWeeks", { n: w });
   }
-  return `~${totalDays} days`;
+  return t("create.durDays", { n: totalDays });
 }
 
 /**
@@ -75,17 +75,22 @@ function computeSummary(form: CreateTandaFormState, decimals: number) {
   return { participants, intervalDays, contribution };
 }
 import { useCreateTanda } from "@/lib/hooks/use-create-tanda";
+import { useT } from "@/lib/i18n";
+import type { TKey } from "@/lib/i18n/dict";
+
+type TFn = (key: TKey, vars?: Record<string, string | number>) => string;
 
 type Touched = Partial<Record<keyof CreateTandaFormState, boolean>>;
 
 const INTERVAL_PRESETS = [
-  { label: "Weekly", days: "7" },
-  { label: "Biweekly", days: "14" },
-  { label: "Monthly", days: "30" },
-];
+  { key: "interval.weekly", days: "7" },
+  { key: "interval.biweekly", days: "14" },
+  { key: "interval.monthly", days: "30" },
+] as const;
 
 /** "Create tanda" button that opens the create-tanda modal. */
 export function CreateTandaButton() {
+  const t = useT();
   const [open, setOpen] = useState(false);
   const [joinTarget, setJoinTarget] = useState<{
     address: `0x${string}`;
@@ -103,7 +108,7 @@ export function CreateTandaButton() {
         icon={<Plus className="size-5" />}
         onClick={() => setOpen(true)}
       >
-        Create tanda
+        {t("create.btn")}
       </ActionButton>
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="max-w-lg">
@@ -155,6 +160,7 @@ function CreateTandaContent({
   onInvite: (address: `0x${string}`, id: bigint) => void;
 }) {
   const { isConnected } = useAccount();
+  const t = useT();
   const [form, setForm] = useState<CreateTandaFormState>(initialFormState);
   const [touched, setTouched] = useState<Touched>({});
   const [attempted, setAttempted] = useState(false);
@@ -222,10 +228,9 @@ function CreateTandaContent({
   return (
     <div className="space-y-4">
       <DialogHeader>
-        <DialogTitle className="text-h2">Create a Tanda</DialogTitle>
+        <DialogTitle className="text-h2">{t("create.title")}</DialogTitle>
         <DialogDescription>
-          A rotating savings circle on {activeChain.name} — each member receives
-          the pot once over the cycle.
+          {t("create.desc", { chain: activeChain.name })}
         </DialogDescription>
       </DialogHeader>
 
@@ -238,8 +243,8 @@ function CreateTandaContent({
       <div className="space-y-4">
         {/* Contribution */}
         <Field
-          label="Contribution per cycle"
-          hint={symbol ? `In ${symbol}` : undefined}
+          label={t("create.contribution")}
+          hint={symbol ? t("create.inSym", { sym: symbol }) : undefined}
           error={showErr("contribution")}
         >
           <div className="relative">
@@ -259,8 +264,11 @@ function CreateTandaContent({
 
         {/* Payout interval */}
         <Field
-          label="Payout interval"
-          hint={`${BOUNDS.intervalDays.min}–${BOUNDS.intervalDays.max} days`}
+          label={t("create.interval")}
+          hint={t("create.daysRange", {
+            min: BOUNDS.intervalDays.min,
+            max: BOUNDS.intervalDays.max,
+          })}
           error={showErr("intervalDays")}
         >
           <div className="mb-2 flex gap-1.5">
@@ -271,7 +279,7 @@ function CreateTandaContent({
                 onClick={() => set("intervalDays", p.days)}
                 className={chipCls(form.intervalDays === p.days)}
               >
-                {p.label}
+                {t(p.key)}
               </button>
             ))}
           </div>
@@ -284,14 +292,14 @@ function CreateTandaContent({
               className={inputCls(!!showErr("intervalDays"))}
             />
             <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-caption font-medium text-foreground-muted">
-              days
+              {t("create.days")}
             </span>
           </div>
         </Field>
 
         {/* Participants */}
         <Field
-          label="Number of participants"
+          label={t("create.participants")}
           hint={`${BOUNDS.participants.min}–${BOUNDS.participants.max}`}
           error={showErr("participants")}
         >
@@ -306,8 +314,11 @@ function CreateTandaContent({
 
         {/* Grace period */}
         <Field
-          label="Grace period"
-          hint={`${BOUNDS.graceDays.min}–${BOUNDS.graceDays.max} days after each deadline`}
+          label={t("create.grace")}
+          hint={t("create.graceHint", {
+            min: BOUNDS.graceDays.min,
+            max: BOUNDS.graceDays.max,
+          })}
           error={showErr("graceDays")}
         >
           <div className="relative">
@@ -319,27 +330,27 @@ function CreateTandaContent({
               className={inputCls(!!showErr("graceDays"))}
             />
             <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-caption font-medium text-foreground-muted">
-              days
+              {t("create.days")}
             </span>
           </div>
         </Field>
 
         {/* Start */}
-        <Field label="Start" error={showErr("scheduledLocal")}>
+        <Field label={t("create.start")} error={showErr("scheduledLocal")}>
           <div className="mb-2 flex gap-1.5">
             <button
               type="button"
               onClick={() => set("startMode", "auto")}
               className={chipCls(form.startMode === "auto")}
             >
-              When full
+              {t("create.whenFull")}
             </button>
             <button
               type="button"
               onClick={() => set("startMode", "scheduled")}
               className={chipCls(form.startMode === "scheduled")}
             >
-              Scheduled
+              {t("create.scheduled")}
             </button>
           </div>
           {form.startMode === "scheduled" && (
@@ -354,15 +365,15 @@ function CreateTandaContent({
           )}
           {form.startMode === "auto" && (
             <p className="text-caption text-foreground-muted">
-              Starts automatically once the last seat is filled.
+              {t("create.autoBody")}
             </p>
           )}
         </Field>
 
         {/* Privacy (live) */}
         <Field
-          label="Privacy"
-          hint={form.privacy === "private" ? "Invite-only" : "Anyone can join"}
+          label={t("create.privacy")}
+          hint={form.privacy === "private" ? t("create.inviteOnly") : t("create.anyoneJoin")}
         >
           <div className="flex gap-1.5">
             <button
@@ -370,36 +381,32 @@ function CreateTandaContent({
               onClick={() => set("privacy", "public")}
               className={chipCls(form.privacy === "public")}
             >
-              Public
+              {t("create.public")}
             </button>
             <button
               type="button"
               onClick={() => set("privacy", "private")}
               className={chipCls(form.privacy === "private")}
             >
-              Private (invite-only)
+              {t("create.privateOpt")}
             </button>
           </div>
           {form.privacy === "private" && (
             <p className="text-caption text-foreground-muted">
-              Only wallets you sign an invite for can join. You&apos;ll generate
-              invite links after creating.
+              {t("create.privateHelp")}
             </p>
           )}
         </Field>
 
         {/* Token (picker from the Manager allowlist) */}
-        <Field
-          label="Token"
-          hint="Allowlisted on the Manager"
-        >
+        <Field label={t("create.token")} hint={t("create.tokenHint")}>
           {loadingTokens ? (
             <div className="flex items-center gap-2 rounded-btn border border-border bg-background-muted px-3 py-2.5 text-caption text-foreground-muted">
-              <Loader2 className="size-4 animate-spin" /> Loading tokens…
+              <Loader2 className="size-4 animate-spin" /> {t("create.loadingTokens")}
             </div>
           ) : tokens.length === 0 ? (
             <Banner tone="danger" icon={<AlertTriangle className="size-4" />}>
-              No allowlisted tokens found on the Manager.
+              {t("create.noTokens")}
             </Banner>
           ) : (
             <div className="flex flex-wrap gap-1.5">
@@ -422,29 +429,29 @@ function CreateTandaContent({
       {summary && (
         <div className="rounded-btn bg-accent-soft p-3 text-caption text-foreground">
           <p>
-            Runs for{" "}
-            <strong>{summary.participants} cycles</strong> (
-            {humanizeDays(summary.participants * summary.intervalDays)}). Each
-            member receives the pot once.
+            {t("create.summaryRuns", {
+              n: summary.participants,
+              dur: humanizeDays(summary.participants * summary.intervalDays, t),
+            })}
           </p>
           {summary.contribution != null && summary.contribution > 0n && (
             <>
               <p className="mt-1 text-foreground-muted">
-                Charged now (your first cycle):{" "}
-                <strong className="text-foreground">
-                  {fmt(perCycleCharge(summary.contribution))} {symbol}
-                </strong>{" "}
-                — {fmt(summary.contribution)} +{" "}
-                {fmt(premiumPerCycle(summary.contribution))} insurance. You&apos;re
-                enrolled as the first member.
+                {t("create.summaryCharged", {
+                  total: fmt(perCycleCharge(summary.contribution)),
+                  sym: symbol,
+                  contrib: fmt(summary.contribution),
+                  prem: fmt(premiumPerCycle(summary.contribution)),
+                })}
               </p>
               <p className="mt-1 text-foreground-muted">
-                Over the whole tanda you&apos;ll pay{" "}
-                <strong className="text-foreground">
-                  {fmt(perCycleCharge(summary.contribution) * BigInt(summary.participants))}{" "}
-                  {symbol}
-                </strong>{" "}
-                ({summary.participants} cycles).
+                {t("create.summaryTotal", {
+                  total: fmt(
+                    perCycleCharge(summary.contribution) * BigInt(summary.participants),
+                  ),
+                  sym: symbol,
+                  n: summary.participants,
+                })}
               </p>
             </>
           )}
@@ -455,7 +462,7 @@ function CreateTandaContent({
       <div className="space-y-2 pt-1">
         {!isConnected ? (
           <Banner tone="muted" icon={<Wallet className="size-4" />}>
-            Connect your wallet (top right) to create a tanda.
+            {t("create.connect")}
           </Banner>
         ) : create.isWrongNetwork ? (
           <button
@@ -465,7 +472,7 @@ function CreateTandaContent({
             className="flex w-full items-center justify-center gap-2 rounded-btn bg-primary px-5 py-3.5 text-h3 text-primary-foreground transition-colors hover:bg-primary-hover disabled:opacity-60"
           >
             {create.isSwitching && <Loader2 className="size-4 animate-spin" />}
-            Switch to {activeChain.name}
+            {t("common.switchTo", { chain: activeChain.name })}
           </button>
         ) : (
           <button
@@ -475,7 +482,7 @@ function CreateTandaContent({
             className="flex w-full items-center justify-center gap-2 rounded-btn bg-primary px-5 py-3.5 text-h3 text-primary-foreground transition-colors hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-60"
           >
             <Plus className="size-5" />
-            Create Tanda
+            {t("create.createBtn")}
           </button>
         )}
       </div>
@@ -492,22 +499,23 @@ function PendingPanel({
   hash?: `0x${string}`;
   symbol: string;
 }) {
+  const t = useT();
   const heading =
     status === "approve-signing"
-      ? `Approve ${symbol} in your wallet`
+      ? t("create.approveSign", { sym: symbol })
       : status === "approve-pending"
-        ? `Approving ${symbol}…`
+        ? t("create.approving", { sym: symbol })
         : status === "signing"
-          ? "Confirm in your wallet"
-          : "Creating your tanda…";
+          ? t("create.signing")
+          : t("create.creating");
   const body =
     status === "approve-signing"
-      ? `Creating a tanda charges your first contribution + premium. Approve the Manager to spend your ${symbol}.`
+      ? t("create.approveSignBody", { sym: symbol })
       : status === "approve-pending"
-        ? `Waiting for the approval to be mined on ${activeChain.name}.`
+        ? t("create.approvingBody", { chain: activeChain.name })
         : status === "signing"
-          ? "Confirm the transaction in your wallet to create the tanda and pay your first cycle."
-          : `Your transaction is in the mempool. Waiting for it to be mined on ${activeChain.name}.`;
+          ? t("create.signingBody")
+          : t("create.creatingBody", { chain: activeChain.name });
   return (
     <div className="flex flex-col items-center gap-3 py-6 text-center">
       <Loader2 className="size-10 animate-spin text-primary dark:text-accent" />
@@ -540,19 +548,18 @@ function SuccessPanel({
   onJoin: (address: `0x${string}`, id?: bigint) => void;
   onInvite: (address: `0x${string}`, id: bigint) => void;
 }) {
+  const t = useT();
   const addr = create.createdTandaAddress;
   const id = create.createdTandaId;
   return (
     <div className="flex flex-col items-center gap-3 py-6 text-center">
       <CheckCircle2 className="size-10 text-success" />
       <h2 className="text-h2">
-        Tanda{id != null ? ` #${id}` : ""} created
+        {t("create.createdTitle", { n: id != null ? ` #${id}` : "" })}
       </h2>
       {/* Charge-at-create: the creator is already enrolled (cycle 1 paid). */}
       <p className="max-w-xs text-body text-foreground-muted">
-        {isPrivate
-          ? "Your private tanda is live and you're enrolled as the first member. Generate invite links for the remaining seats — only invited wallets can join."
-          : "Your tanda is live and you're enrolled as the first member (first cycle paid). Share the link to fill the remaining seats."}
+        {isPrivate ? t("create.createdPrivate") : t("create.createdPublic")}
       </p>
       {create.hash && (
         <a
@@ -561,14 +568,14 @@ function SuccessPanel({
           rel="noreferrer"
           className="font-mono text-caption text-accent underline"
         >
-          View transaction
+          {t("common.viewTx")}
         </a>
       )}
       <div className="mt-2 w-full space-y-2">
         {id != null && (
           <div className="space-y-1.5 text-left">
             <div className="text-caption font-semibold text-foreground">
-              Share this link to let people {isPrivate ? "request to join" : "join"}
+              {isPrivate ? t("create.sharePrivate") : t("create.sharePublic")}
             </div>
             <ShareLinkBox tandaId={id} />
           </div>
@@ -580,7 +587,7 @@ function SuccessPanel({
             onClick={() => addr && id != null && onInvite(addr, id)}
             className="flex w-full items-center justify-center rounded-btn border border-border px-5 py-2.5 text-caption font-medium text-foreground-muted transition-colors hover:bg-background-muted disabled:opacity-60"
           >
-            Advanced: invite a specific wallet directly
+            {t("create.advancedInvite")}
           </button>
         )}
         <button
@@ -588,7 +595,7 @@ function SuccessPanel({
           onClick={onDone}
           className="flex w-full items-center justify-center rounded-btn bg-primary px-5 py-3 text-h3 text-primary-foreground transition-colors hover:bg-primary-hover"
         >
-          Go to dashboard
+          {t("create.goToDashboard")}
         </button>
       </div>
     </div>
