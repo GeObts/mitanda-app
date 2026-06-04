@@ -577,6 +577,44 @@ export const dict = {
     en: "If a member stops paying, they lose everything they've put in — their contributions and their insurance — so the people who stay are protected.",
   },
 
+  // features
+  "land.featEyebrow": { es: "Funciones", en: "Features" },
+  "land.featTitle": { es: "Todo lo que una tanda moderna necesita", en: "Everything a modern tanda needs" },
+  "land.featSubtitle": {
+    es: "Familiar por diseño, con algunos detalles pensados para mantener tu círculo seguro y simple.",
+    en: "Familiar by design, with a few thoughtful touches to keep your circle safe and simple.",
+  },
+  "land.featB1t": { es: "Tandas públicas y privadas", en: "Public & private tandas" },
+  "land.featB1b": {
+    es: "Únete a un círculo abierto o crea una tanda privada, solo por invitación, para amigos y familia. Comparte un enlace y ya están dentro.",
+    en: "Join an open circle or spin up a private, invite-only tanda for friends and family. Share a link and they're in.",
+  },
+  "land.featB2t": { es: "Seguro integrado", en: "Built-in insurance" },
+  "land.featB2b": {
+    es: "Un fondo de protección ayuda a cubrir al grupo si un miembro deja de pagar, para que una aportación perdida no descarrile a todos.",
+    en: "A protection pool helps cover the group if a member stops paying, so one missed contribution doesn't derail everyone.",
+  },
+  "land.featB3t": { es: "Comisiones bajas y transparentes", en: "Low, transparent fees" },
+  "land.featB3b": {
+    es: "Las comisiones son pequeñas y se muestran por adelantado — sin sorpresas ni cobros ocultos.",
+    en: "Fees are small and shown up front — no surprises, no hidden cuts.",
+  },
+  "land.featB4t": { es: "Inicia sesión con correo o redes sociales", en: "Sign in with email or social" },
+  "land.featB4b": {
+    es: "Sin frase semilla, sin configurar wallet, sin experiencia en cripto. Si sabes usar una app de banco, sabes usar MiTanda.",
+    en: "No seed phrase, no wallet setup, no crypto experience required. If you can use a banking app, you can use MiTanda.",
+  },
+  "land.featB5t": { es: "Recibos onchain", en: "Onchain receipts" },
+  "land.featB5b": {
+    es: "Cada aportación y cada pago queda registrado, así siempre tienes comprobante.",
+    en: "Every contribution and payout is recorded, so you always have proof.",
+  },
+  "land.featB6t": { es: "Insignia de finalización", en: "Completion badge" },
+  "land.featB6b": {
+    es: "Termina una tanda y gana una insignia que construye tu reputación de ahorro con el tiempo.",
+    en: "Finish a tanda and earn a badge that builds your savings reputation over time.",
+  },
+
   // built for real money
   "land.moneyEyebrow": { es: "Hecho para dinero real", en: "Built for real money" },
   "land.moneyTitle": { es: "Fondos reales, ahorro real, pagos instantáneos", en: "Real Funds, Real Savings, Instant Payouts" },

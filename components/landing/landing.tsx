@@ -12,6 +12,12 @@ import {
   Gift,
   Trophy,
   TriangleAlert,
+  Sparkles,
+  Share2,
+  BadgePercent,
+  Mail,
+  ReceiptText,
+  Award,
   Zap,
   BadgeCheck,
   ArrowRight,
@@ -43,6 +49,7 @@ export function Landing() {
       <WhySafe />
       <TrustSolved />
       <RealMoney />
+      <Features />
       <WhoItsFor />
       <FinalCta />
       <SiteFooter />
@@ -481,6 +488,43 @@ function CurrencyCard({
       <h3 className="mt-6 text-2xl font-semibold tracking-tight">{title}</h3>
       <p className="mt-2.5 text-lg text-foreground-muted">{body}</p>
     </GlowCard>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────── 4b. Features ── */
+
+function Features() {
+  const t = useT();
+  // Bento layout on md+ (6-col grid): a wide box pairs with a narrow one, the
+  // pattern mirrors on the next row, and the last two split the row evenly.
+  const boxes = [
+    { icon: <Share2 className="size-7" />, title: t("land.featB1t"), body: t("land.featB1b"), span: "md:col-span-4" },
+    { icon: <ShieldCheck className="size-7" />, title: t("land.featB2t"), body: t("land.featB2b"), span: "md:col-span-2" },
+    { icon: <BadgePercent className="size-7" />, title: t("land.featB3t"), body: t("land.featB3b"), span: "md:col-span-2" },
+    { icon: <Mail className="size-7" />, title: t("land.featB4t"), body: t("land.featB4b"), span: "md:col-span-4" },
+    { icon: <ReceiptText className="size-7" />, title: t("land.featB5t"), body: t("land.featB5b"), span: "md:col-span-3" },
+    { icon: <Award className="size-7" />, title: t("land.featB6t"), body: t("land.featB6b"), span: "md:col-span-3" },
+  ];
+  return (
+    <Section id="features">
+      <SectionHeading
+        eyebrow={t("land.featEyebrow")}
+        eyebrowIcon={<Sparkles className="size-4" />}
+        title={t("land.featTitle")}
+        subtitle={t("land.featSubtitle")}
+      />
+      <div className="mt-14 grid grid-cols-1 gap-6 md:grid-cols-6">
+        {boxes.map((b) => (
+          <div key={b.title} className={`h-full ${b.span}`}>
+            <GlowCard>
+              <GradientIcon>{b.icon}</GradientIcon>
+              <h3 className="mt-6 text-xl font-semibold tracking-tight">{b.title}</h3>
+              <p className="mt-2.5 text-base text-foreground-muted">{b.body}</p>
+            </GlowCard>
+          </div>
+        ))}
+      </div>
+    </Section>
   );
 }
 
