@@ -12,6 +12,9 @@ export function ThemeToggle() {
   const [isDark, setIsDark] = useState(false);
 
   useEffect(() => {
+    // Mirror the pre-paint inline script's <html> class; SSR can't know it, so
+    // sync once on mount. One-shot, not a cascading render loop.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsDark(document.documentElement.classList.contains("dark"));
   }, []);
 

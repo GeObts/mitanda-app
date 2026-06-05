@@ -107,6 +107,9 @@ function ManagerContent({
     setActing(requester);
     setError(null);
     try {
+      // Date.now() here is intentional — this is a click handler, and the signed
+      // deadline must reflect the real time of approval.
+      // eslint-disable-next-line react-hooks/purity
       const deadline = Math.floor(Date.now() / 1000) + APPROVE_TTL_DAYS * 86400;
       const ticket = await signTypedDataAsync({
         domain: inviteDomain(tandaAddress),
