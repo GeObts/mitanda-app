@@ -13,7 +13,6 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { ActionButton } from "@/components/mt/action-button";
-import { JoinTandaDialog } from "@/components/join-tanda-dialog";
 import { InviteGeneratorDialog } from "@/components/invite-generator-dialog";
 import { ShareLinkBox } from "@/components/share-link";
 import {
@@ -92,10 +91,6 @@ const INTERVAL_PRESETS = [
 export function CreateTandaButton() {
   const t = useT();
   const [open, setOpen] = useState(false);
-  const [joinTarget, setJoinTarget] = useState<{
-    address: `0x${string}`;
-    id?: bigint;
-  } | null>(null);
   const [inviteTarget, setInviteTarget] = useState<{
     address: `0x${string}`;
     id: bigint;
@@ -115,10 +110,6 @@ export function CreateTandaButton() {
           <CreateTandaContent
             key={open ? "open" : "closed"}
             onDone={() => setOpen(false)}
-            onJoin={(address, id) => {
-              setOpen(false);
-              setJoinTarget({ address, id });
-            }}
             onInvite={(address, id) => {
               setOpen(false);
               setInviteTarget({ address, id });
@@ -126,16 +117,6 @@ export function CreateTandaButton() {
           />
         </DialogContent>
       </Dialog>
-      {joinTarget && (
-        <JoinTandaDialog
-          open={!!joinTarget}
-          onOpenChange={(o) => {
-            if (!o) setJoinTarget(null);
-          }}
-          presetAddress={joinTarget.address}
-          presetId={joinTarget.id}
-        />
-      )}
       {inviteTarget && (
         <InviteGeneratorDialog
           open={!!inviteTarget}
@@ -152,11 +133,9 @@ export function CreateTandaButton() {
 
 function CreateTandaContent({
   onDone,
-  onJoin,
   onInvite,
 }: {
   onDone: () => void;
-  onJoin: (address: `0x${string}`, id?: bigint) => void;
   onInvite: (address: `0x${string}`, id: bigint) => void;
 }) {
   const { isConnected } = useAccount();
@@ -213,7 +192,6 @@ function CreateTandaContent({
         create={create}
         isPrivate={form.privacy === "private"}
         onDone={onDone}
-        onJoin={onJoin}
         onInvite={onInvite}
       />
     );
@@ -539,13 +517,11 @@ function SuccessPanel({
   create,
   isPrivate,
   onDone,
-  onJoin,
   onInvite,
 }: {
   create: ReturnType<typeof useCreateTanda>;
   isPrivate: boolean;
   onDone: () => void;
-  onJoin: (address: `0x${string}`, id?: bigint) => void;
   onInvite: (address: `0x${string}`, id: bigint) => void;
 }) {
   const t = useT();
