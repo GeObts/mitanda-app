@@ -624,20 +624,22 @@ function SiteFooter() {
   ];
   return (
     <footer className="border-t border-white/50 bg-white/40 backdrop-blur-xl dark:border-white/10 dark:bg-white/[0.03]">
-      <div className="mx-auto flex max-w-6xl flex-col gap-10 px-5 py-12 sm:px-8 md:flex-row md:items-start md:justify-between">
-        <div className="md:max-w-sm">
-          <div className="text-2xl font-semibold tracking-tight">
-            <Wordmark />
+      <div className="px-5 py-12 sm:px-8">
+        <div className="flex flex-col gap-10 md:flex-row md:items-start md:justify-between">
+          {/* Brand block — hard against the left edge. */}
+          <div className="md:max-w-sm">
+            <div className="text-2xl font-semibold tracking-tight">
+              <Wordmark />
+            </div>
+            <p className="mt-2 text-base text-foreground-muted">
+              {t("land.footTagline")}
+            </p>
+            <p className="mt-4 text-sm text-foreground-muted">
+              {t("land.footCopyright", { year: YEAR })}
+            </p>
           </div>
-          <p className="mt-2 text-base text-foreground-muted">
-            {t("land.footTagline")}
-          </p>
-          <p className="mt-4 text-sm text-foreground-muted">
-            {t("land.footCopyright", { year: YEAR })}
-          </p>
-        </div>
 
-        <div className="flex flex-col gap-5 md:items-end md:text-right">
+          {/* Nav links — top right. */}
           <nav className="flex flex-wrap gap-x-8 gap-y-3 md:justify-end">
             {links.map((l) => (
               <a
@@ -649,6 +651,10 @@ function SiteFooter() {
               </a>
             ))}
           </nav>
+        </div>
+
+        {/* Powered-by — far bottom right. */}
+        <div className="mt-10 flex md:justify-end">
           <span className="flex items-center gap-1.5 text-sm text-foreground-muted">
             <RotatingArrows className="size-4 text-[#0000ff] dark:text-[#7db0ff]" />
             {t("land.footPowered")}
