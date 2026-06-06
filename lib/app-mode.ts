@@ -44,7 +44,7 @@ export const BUILDER_DATA_SUFFIX = ((): `0x${string}` | undefined => {
 
 /**
  * Public origin of THIS deployment, no trailing slash (e.g.
- * https://base.mitanda.app). Used to build absolute URLs for embed/OG metadata
+ * https://base.mitanda.online). Used to build absolute URLs for embed/OG metadata
  * and the Farcaster manifest. Falls back to a relative-safe empty string.
  */
 export const APP_URL = (process.env.NEXT_PUBLIC_APP_URL ?? "")
