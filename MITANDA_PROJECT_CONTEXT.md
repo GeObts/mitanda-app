@@ -39,7 +39,7 @@ per-file changes.
 | Build | Branch | Chain | Auth | Cloudflare Worker | URL | State |
 |-------|--------|-------|------|-------------------|-----|-------|
 | **Web app** (default) | `main` | Arbitrum One (42161) | Privy (email/social) | `mitanda` | [mitanda.online](https://mitanda.online) | **Live** |
-| **Base App** | `base-app` | Base mainnet (8453) | Base Account (auto-connect in-app) | `mitanda-base` | TBD | **Deploy in progress** |
+| **Base App** | `base-app` | Base mainnet (8453) | Base Account (auto-connect in-app) | `mitanda-base` | [base.mitanda.online](https://base.mitanda.online) | **Deploy in progress** |
 
 - **Deploys** run through **Cloudflare Workers Builds** (OpenNext adapter). A push
   to `main` builds + deploys the web app to `mitanda.online` automatically.
@@ -150,9 +150,9 @@ Authoritative deployment records: `mitanda-contracts/deployments/42161.json`,
 
 ### Open / in progress
 - **Etherfuse integration** — in progress on the `etherfuse` branch (see §7).
-- **Base App Cloudflare Worker deploy** — in progress; once live, fill in the
-  Base App URL (here and in `README.md`), and complete base.dev registration per
-  `docs/BASE_APP.md`.
+- **Base App Cloudflare Worker deploy** — in progress; custom domain
+  `base.mitanda.online` attached. Complete base.dev registration per
+  `docs/BASE_APP.md` once the Worker is live.
 
 ---
 
