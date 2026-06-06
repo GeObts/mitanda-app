@@ -35,7 +35,7 @@ people already understand (the Mexican-peso stablecoin **MXNB**, or USDC).
 ## Live URLs
 
 - **Web app:** [mitanda.online](https://mitanda.online) — Arbitrum One, Privy login.
-- **Base App:** _TBD_ — fill in once the Base App Cloudflare Worker deploy completes.
+- **Base App:** [base.mitanda.online](https://base.mitanda.online) — Base mainnet, Base Account auth (deploy in progress).
 
 ---
 
