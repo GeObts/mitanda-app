@@ -694,6 +694,48 @@ export const dict = {
   "land.vizThisRound": { es: "esta ronda", en: "this round" },
   "land.vizRound": { es: "Ronda {x} de {n}", en: "Round {x} of {n}" },
   "land.vizTurn": { es: "turno de {name}", en: "{name}'s turn" },
+
+  // ── yield / Etherfuse (CETES) ─────────────────────────────────────────────
+  "yield.eyebrow": { es: "Con tecnología de Etherfuse", en: "Powered by Etherfuse" },
+  "yield.title": {
+    es: "Rendimiento del fondo de seguro",
+    en: "Insurance pool yield",
+  },
+  "yield.depositLine": {
+    es: "Tu depósito de seguridad del 10% genera ~{apy}% anual vía CETES de Etherfuse (bonos del gobierno mexicano).",
+    en: "Your 10% safety deposit is earning ~{apy}% APY via Etherfuse CETES (Mexican government bonds).",
+  },
+  "yield.atCompletion": { es: "Al completar", en: "At completion" },
+  "yield.refundYield": {
+    es: "reembolso completo + rendimiento",
+    en: "full refund + yield",
+  },
+
+  // swap widget
+  "yield.swapTitle": { es: "Swap en vivo (demo)", en: "Live swap (demo)" },
+  "yield.swapIntro": {
+    es: "Conecta una wallet de Solana para cotizar y ejecutar un swap real USDC → CETES en devnet.",
+    en: "Connect a Solana wallet to quote and run a real USDC → CETES swap on devnet.",
+  },
+  "yield.amountLabel": { es: "Monto a convertir (USDC)", en: "Amount to swap (USDC)" },
+  "yield.getQuote": { es: "Cotizar", en: "Get quote" },
+  "yield.quoting": { es: "Cotizando…", en: "Getting quote…" },
+  "yield.quoteResult": { es: "{src} USDC → {dst} CETES", en: "{src} USDC → {dst} CETES" },
+  "yield.quoteRate": { es: "Tasa: 1 USDC = {rate} CETES", en: "Rate: 1 USDC = {rate} CETES" },
+  "yield.quoteFee": { es: "Comisión: {bps} bps", en: "Fee: {bps} bps" },
+  "yield.quoteExpires": { es: "La cotización expira en ~2 min", en: "Quote expires in ~2 min" },
+  "yield.executeSwap": { es: "Convertir USDC → CETES", en: "Swap USDC → CETES" },
+  "yield.swapInitiating": { es: "Iniciando…", en: "Initiating…" },
+  "yield.swapAwaiting": { es: "Esperando a Etherfuse…", en: "Waiting for Etherfuse…" },
+  "yield.swapSigning": { es: "Confirma en tu wallet…", en: "Confirm in your wallet…" },
+  "yield.swapSubmitted": { es: "Enviada…", en: "Submitted…" },
+  "yield.swapCompleted": { es: "Swap completado", en: "Swap complete" },
+  "yield.viewTx": { es: "Ver en Solana Explorer", en: "View on Solana Explorer" },
+  "yield.reset": { es: "Empezar de nuevo", en: "Start over" },
+  "yield.disclaimer": {
+    es: "Demo en sandbox / devnet. v1 hace swaps en Solana; en producción el USDC de Base se enruta por un puente — ver docs.",
+    en: "Sandbox / devnet demo. v1 swaps on Solana; production routes Base USDC via a bridge — see docs.",
+  },
 } as const;
 
 export type TKey = keyof typeof dict;

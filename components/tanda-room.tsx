@@ -23,6 +23,7 @@ import { PayTandaButton } from "@/components/pay-tanda-dialog";
 import { ReleaseBanner } from "@/components/release";
 import { DefaulterBanner } from "@/components/defaulter";
 import { JoinTandaDialog } from "@/components/join-tanda-dialog";
+import { YieldSection } from "@/components/yield-section";
 import { fmtToken, TandaState } from "@/lib/contracts";
 import { useToken } from "@/lib/hooks/use-token";
 import { useProfiles } from "@/lib/hooks/use-avatar";
@@ -96,6 +97,8 @@ export function MemberRoom({ detail }: { detail: TandaDetail }) {
         <Roster detail={detail} unpaid={pastGraceSet(detail)} />
         <PaymentGrid detail={detail} />
       </div>
+
+      <YieldSection />
 
       <ChatStub />
     </div>
