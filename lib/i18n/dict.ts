@@ -694,6 +694,64 @@ export const dict = {
   "land.vizThisRound": { es: "esta ronda", en: "this round" },
   "land.vizRound": { es: "Ronda {x} de {n}", en: "Round {x} of {n}" },
   "land.vizTurn": { es: "turno de {name}", en: "{name}'s turn" },
+
+  // ── yield / Etherfuse (CETES) ─────────────────────────────────────────────
+  "yield.eyebrow": { es: "Con tecnología de Etherfuse", en: "Powered by Etherfuse" },
+  "yield.title": {
+    es: "Pon a trabajar el fondo de seguro",
+    en: "Put the insurance pool to work",
+  },
+  "yield.headline": {
+    es: "Tu fondo de seguro podría ganar {apy}% anual en CETES vía Etherfuse",
+    en: "Your insurance pool could earn {apy}% APY in CETES via Etherfuse",
+  },
+  "yield.body": {
+    es: "Mientras la tanda avanza, el fondo de seguro está inactivo. Convertido a CETES (bonos del tesoro mexicano tokenizados) genera rendimiento real hasta que se reembolsa al completar la tanda.",
+    en: "While the tanda runs, the insurance pool sits idle. Parked in CETES (tokenized Mexican treasury bills) it earns real yield until it's refunded when the tanda completes.",
+  },
+  "yield.poolLabel": { es: "Fondo de seguro", en: "Insurance pool" },
+  "yield.apyLabel": { es: "Rendimiento CETES (en vivo)", en: "CETES APY (live)" },
+  "yield.projectedLabel": { es: "Rendimiento proyectado / año", en: "Projected yield / year" },
+  "yield.projectedNote": {
+    es: "Estimado sobre el fondo actual a {apy}% anual",
+    en: "Estimated on the current pool at {apy}% APY",
+  },
+  "yield.rateLoading": { es: "Cargando tasa en vivo…", en: "Loading live rate…" },
+  "yield.rateError": {
+    es: "No se pudo cargar la tasa de CETES en vivo.",
+    en: "Couldn't load the live CETES rate.",
+  },
+  "yield.cetesName": {
+    es: "CETES — bonos del tesoro mexicano",
+    en: "CETES — Mexican treasury bills",
+  },
+  "yield.asOf": { es: "al {time}", en: "as of {time}" },
+
+  // swap widget
+  "yield.swapTitle": { es: "Swap en vivo (demo)", en: "Live swap (demo)" },
+  "yield.swapIntro": {
+    es: "Conecta una wallet de Solana para cotizar y ejecutar un swap real USDC → CETES en devnet.",
+    en: "Connect a Solana wallet to quote and run a real USDC → CETES swap on devnet.",
+  },
+  "yield.amountLabel": { es: "Monto a convertir (USDC)", en: "Amount to swap (USDC)" },
+  "yield.getQuote": { es: "Cotizar", en: "Get quote" },
+  "yield.quoting": { es: "Cotizando…", en: "Getting quote…" },
+  "yield.quoteResult": { es: "{src} USDC → {dst} CETES", en: "{src} USDC → {dst} CETES" },
+  "yield.quoteRate": { es: "Tasa: 1 USDC = {rate} CETES", en: "Rate: 1 USDC = {rate} CETES" },
+  "yield.quoteFee": { es: "Comisión: {bps} bps", en: "Fee: {bps} bps" },
+  "yield.quoteExpires": { es: "La cotización expira en ~2 min", en: "Quote expires in ~2 min" },
+  "yield.executeSwap": { es: "Convertir USDC → CETES", en: "Swap USDC → CETES" },
+  "yield.swapInitiating": { es: "Iniciando…", en: "Initiating…" },
+  "yield.swapAwaiting": { es: "Esperando a Etherfuse…", en: "Waiting for Etherfuse…" },
+  "yield.swapSigning": { es: "Confirma en tu wallet…", en: "Confirm in your wallet…" },
+  "yield.swapSubmitted": { es: "Enviada…", en: "Submitted…" },
+  "yield.swapCompleted": { es: "Swap completado", en: "Swap complete" },
+  "yield.viewTx": { es: "Ver en Solana Explorer", en: "View on Solana Explorer" },
+  "yield.reset": { es: "Empezar de nuevo", en: "Start over" },
+  "yield.disclaimer": {
+    es: "Demo en sandbox / devnet. v1 hace swaps en Solana; en producción el USDC de Base se enruta por un puente — ver docs.",
+    en: "Sandbox / devnet demo. v1 swaps on Solana; production routes Base USDC via a bridge — see docs.",
+  },
 } as const;
 
 export type TKey = keyof typeof dict;

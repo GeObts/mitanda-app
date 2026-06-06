@@ -23,6 +23,7 @@ import { PayTandaButton } from "@/components/pay-tanda-dialog";
 import { ReleaseBanner } from "@/components/release";
 import { DefaulterBanner } from "@/components/defaulter";
 import { JoinTandaDialog } from "@/components/join-tanda-dialog";
+import { YieldSection } from "@/components/yield-section";
 import { fmtToken, TandaState } from "@/lib/contracts";
 import { useToken } from "@/lib/hooks/use-token";
 import { useProfiles } from "@/lib/hooks/use-avatar";
@@ -77,6 +78,9 @@ export function MemberRoom({ detail }: { detail: TandaDetail }) {
   const { tandas } = useUserTandas();
   const viewer = tandas.find((t) => t.id === detail.id);
 
+  // Token metadata for the Etherfuse yield panel (decimals/symbol).
+  const { token } = useToken(detail.tokenAddress);
+
   return (
     <div className="space-y-6">
       <RoomHeader detail={detail} />
@@ -96,6 +100,17 @@ export function MemberRoom({ detail }: { detail: TandaDetail }) {
         <Roster detail={detail} unpaid={pastGraceSet(detail)} />
         <PaymentGrid detail={detail} />
       </div>
+
+      {detail.address && (
+        <YieldSection
+          tandaAddress={detail.address}
+          contributionAmount={detail.contributionAmount}
+          participantCount={detail.participantCount}
+          totalCycles={detail.totalCycles}
+          tokenDecimals={token?.decimals ?? 6}
+          tokenSymbol={token?.symbol ?? ""}
+        />
+      )}
 
       <ChatStub />
     </div>
