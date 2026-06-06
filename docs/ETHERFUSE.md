@@ -6,7 +6,8 @@ each tanda's `totalInsuranceReserve` and sits **idle** for the life of the tanda
 then is refunded to members on completion. This integration puts that idle capital
 to work by routing it into **CETES** — tokenized Mexican treasury bills issued by
 [Etherfuse](https://etherfuse.com) — so the pool earns a real, low-risk yield
-(live **3.13% APY** at time of writing) while it waits.
+(live **~5.58% APY** at time of writing, sourced from Etherfuse production — see
+[Rate source](#rate-source-live-vs-sandbox)) while it waits.
 
 This doc describes the production target (v2) and the shipped demo (v1), and why
 they differ.
@@ -17,10 +18,10 @@ they differ.
 
 | | v1 (shipped demo) | v2 (production target) |
 |---|---|---|
-| Where the pool lives | Solana devnet | Base mainnet (where the tandas are) |
-| Yield asset | CETES SPL token | CETES |
-| How USDC → CETES | Direct Etherfuse swap on Solana | Bridge Base USDC → Solana, swap, bridge CETES value back |
-| Cross-chain | none | LayerZero / Circle CCTP round-trip |
+| Network | Solana **devnet** (sandbox key) | **mainnet** (production key) |
+| Where CETES ends up | user's Solana wallet | user's **Base** Privy wallet (`0x33a7…1FfC`) |
+| How USDC → CETES | Direct Etherfuse swap on Solana | Etherfuse swap on Solana mainnet, then **LayerZero OFT `send()` → Base** |
+| Cross-chain | none | LayerZero OFT (Solana→Base, peer live); CCTP round-trip optional |
 | Auth surface | `app/api/etherfuse/*` route handlers (server-held key) | same, plus signed webhooks + durable store |
 
 The **only** reason v1 runs on Solana instead of Base is **liquidity** (next
@@ -92,9 +93,27 @@ YieldSection (tanda room)
   transaction (`sendTransaction`) and final status arrive via the `swap_updated`
   webhook (`created → funded → completed`).
 - **CETES APY** comes from `GET /lookup/bonds/cost/CETES` →
-  `current_basis_points` (e.g. `313` = 3.13%). This endpoint is **public** (no key).
+  `current_basis_points`. This endpoint is **public** (no key). We read it from
+  **production** for the true live rate — see [Rate source](#rate-source-live-vs-sandbox).
 - `/ramp/assets` is intermittently slow (504s); the mints above are baked into
   `lib/etherfuse/constants.ts` with the live lookup as a fallback.
+
+### Rate source (live vs sandbox)
+
+The displayed APY is read from **production's** public lookup
+(`https://api.etherfuse.com/lookup/bonds/cost/CETES`), not the sandbox. Why:
+
+| Source | `current_basis_points` | APY |
+|---|---:|---|
+| `api.sand.etherfuse.com` (sandbox) | `313` | 3.13% — **stale/fixed** |
+| `api.etherfuse.com` (production, public) | `558` | **5.58% (live, 2026-06-06)** |
+
+The sandbox value just mirrors the **devnet mint's** interest-bearing extension
+(`currentRate: 313`; its `preUpdateAverageRate` was `639`). Production tracks the
+real instrument and matches what `devnet.etherfuse.com` shows (~6%). Both endpoints
+are public and keyless, so sourcing the *rate* from production is free and honest;
+only the **swap/quote** require the sandbox key. Override via
+`ETHERFUSE_PUBLIC_BASE_URL` (`lib/etherfuse/client.ts › getCetesRate`).
 
 ### The webhook + localhost caveat
 
@@ -139,51 +158,114 @@ The MiTanda contracts are **untouched** — the integration only *reads*
 
 ---
 
-## v2 — production target (Base, via a bridge round-trip)
+## v2 — production target (Solana swap → LayerZero OFT → Base CETES)
 
-The insurance pool is Base USDC, but CETES liquidity is on Solana. v2 keeps the
-pool's *accounting* on Base while sourcing yield from Solana via a cross-chain
-round-trip:
+The goal: the user ends up holding **CETES on Base** (in their existing Privy
+wallet) so the yield position lives next to the tandas. The pathway, all on
+**mainnet**:
 
 ```
-Base USDC (insurance reserve)
-   │  1. bridge USDC Base → Solana        (Circle CCTP — native USDC burn/mint)
+Solana mainnet USDC
+   │  1. swap USDC → CETES        Etherfuse /ramp/swap (PRODUCTION key)   [same code as v1]
    ▼
-Solana USDC
-   │  2. swap USDC → CETES                (Etherfuse /ramp/swap, as in v1)
+Solana mainnet CETES
+   │  2. LayerZero OFT send()     via the Solana CETES OFT program → dstEid = Base (30184)
    ▼
-Solana CETES  ──────────  earns ~3% APY while the tanda runs
-   │  3. on tanda completion: swap CETES → USDC   (Etherfuse offramp/swap)
-   │  4. bridge USDC Solana → Base        (CCTP back)  + a messaging layer
-   ▼                                       (LayerZero) to settle accounting
-Base USDC (refunded to members + accrued yield)
+Base mainnet CETES               delivered to the user's Privy wallet 0x33a7…1FfC
+   (contract 0x834df4C1d8f51Be24322E39e4766697BE015512F)
 ```
 
-### Why CCTP **and** LayerZero
+### The LayerZero pathway is real and live (verified 2026-06-06)
 
-- **Circle CCTP** moves the *value* (USDC) trustlessly across chains via native
-  burn-and-mint — no wrapped-asset risk. This is the asset bridge.
-- **LayerZero** carries the *messages* — "pool X of tanda Y has been deployed to
-  CETES / has been redeemed for Z USDC" — so the Base-side contract can track the
-  off-chain position and gate refunds on settlement. CCTP moves money; LayerZero
-  moves the state that the contract reasons about.
+- **Base CETES `0x834df4C1d8f51Be24322E39e4766697BE015512F` is a real LayerZero
+  OFT** on **Base mainnet**: `token()` returns its own address (native OFT, not an
+  adapter), `symbol()` = `CETES`, behind an upgradeable proxy. It has **code on Base
+  mainnet** and **none on Base Sepolia**.
+- **The Solana ↔ Base pathway is configured**: calling `peers(30168)` (LayerZero
+  **Solana-mainnet** EID) on the Base OFT returns a non-zero peer
+  `0xdf27232aeae2338ad9c7cf38c083de3d97869dc69b3d480a1dd73d1a2c05cbb5` — i.e. the
+  Base OFT already trusts a Solana-mainnet CETES OFT. So a Solana→Base OFT `send()`
+  has a live, peered destination.
+
+### Why this CANNOT run in the sandbox/devnet (verified by probes today)
+
+This is the reason v2 is future work, not a sandbox demo:
+
+1. **Sandbox doesn't support Base swaps.** `POST /ramp/quote` with
+   `blockchain: "base"` → `400 {"type":"UnsupportedBlockchain","message":"Unsupported
+   blockchain: base"}`. The sandbox only swaps on Solana. (Full payloads in
+   [Probe evidence](#probe-evidence-2026-06-06).)
+2. **Devnet CETES is not a user-callable OFT.** The Solana **devnet** CETES mint
+   (`Avvet…LW4q`) is a plain **Token-2022** mint with an `interestBearingConfig`
+   extension — there is no OFT program a user can call `send()` on. The OFT only
+   exists on **mainnet**.
+3. **Tier mismatch.** Even if devnet CETES were OFT-wrapped, LayerZero only bridges
+   matching tiers (devnet/testnet ↔ testnet, mainnet ↔ mainnet). Solana devnet would
+   peer to **Base Sepolia**, where `0x834d…512F` has **no code**. There is no
+   devnet → Base-mainnet path.
+
+### What's needed to enable v2
+
+- **Etherfuse production API key** (`api_live:…` + base URL `https://api.etherfuse.com`),
+  which requires completing **KYB onboarding** with Etherfuse.
+- **A real USDC float** on Solana mainnet to swap (the swap moves real value).
+- Client-side **LayerZero Solana OFT `send()`** construction (e.g.
+  `@layerzerolabs/oft-v2-solana-sdk`): quote the native fee, build the
+  `VersionedTransaction`, have the user sign in their Solana wallet, then poll
+  [LayerZero Scan](https://layerzeroscan.com) for delivery and the Base receipt.
+- Optionally, an alternative **CCTP + offramp round-trip** if the pool's accounting
+  must stay denominated on Base (bridge Base USDC → Solana, swap, and bridge value
+  back on completion) — heavier, only needed if a Base-side escrow contract holds
+  the reserve. Out of scope here; contracts are not modified.
 
 ### What carries over from v1 unchanged
 
-- `lib/etherfuse/client.ts` (quote/swap/rate) — the Solana leg is identical.
+- `lib/etherfuse/client.ts` (quote/swap/rate) — the Solana swap leg is identical;
+  only the base URL + key flip from sandbox to production.
 - The route-handler + webhook architecture, server-held key, `deriveCustomerId`.
-- The YieldSection UI (the numbers just come from a Base-side position instead of
-  a direct Solana wallet).
+- The YieldSection UI.
 
-### What's new in v2
+---
 
-- A Base-side vault/escrow contract that holds the insurance reserve and emits the
-  bridge intents (out of scope for this integration; contracts are not modified
-  here).
-- CCTP attestation handling + LayerZero message verification.
-- A keeper to drive the multi-step round-trip and reconcile via webhooks.
-- Webhook signature verification + durable persistence.
+## Probe evidence (2026-06-06)
 
-Until CETES liquidity on Base grows enough to make a direct same-chain swap viable
-(making the bridge round-trip unnecessary), the Solana-sourced v2 above is the
-pragmatic production path.
+Raw requests/responses behind the conclusions above, reproducible with the sandbox
+key (`Authorization: <key>`, no `Bearer`).
+
+**Base swaps are unsupported in sandbox** (bond↔bond, isolates the chain check):
+
+```
+POST https://api.sand.etherfuse.com/ramp/quote
+{"blockchain":"base","quoteAssets":{"type":"swap",
+  "sourceAsset":"0xcC77c598d42f2f78Beb42C91d12B9d4041a5cE29",
+  "targetAsset":"0x8C58C6c8Cc86F2E551f3CD94a2E061c659ca61C3"},"sourceAmount":"100"}
+→ 400 {"message":"Unsupported blockchain: base","type":"UnsupportedBlockchain","details":{"blockchain":"base"}}
+```
+
+**No USDC swap source on Base in sandbox** (and cross-chain targets are rejected):
+
+```
+POST https://api.sand.etherfuse.com/ramp/quote
+{"blockchain":"base","quoteAssets":{"type":"swap",
+  "sourceAsset":"0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",   // Base USDC
+  "targetAsset":"0xcC77c598d42f2f78Beb42C91d12B9d4041a5cE29"},"sourceAmount":"100"}
+→ 400 {"message":"Non-stable assets are not supported: 0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913","type":"NonStableAsset"}
+
+POST https://api.sand.etherfuse.com/ramp/quote   (blockchain:solana, target = Base CETES address)
+{"blockchain":"solana","quoteAssets":{"type":"swap",
+  "sourceAsset":"BXTou3CvPxpFVAJvzvEZcAnRLGCHqT1LHKsFTSQft7s",
+  "targetAsset":"0x834df4C1d8f51Be24322E39e4766697BE015512F"},"sourceAmount":"100"}
+→ 400 {"message":"Non-stable assets are not supported: 0x834df4C1d8f51Be24322E39e4766697BE015512F","type":"NonStableAsset"}
+```
+
+`GET /ramp/assets?blockchain=base` returns only CETES (`0xcC77…`) and TESOURO — **no
+stablecoin**, so there is nothing to swap *from* on Base in sandbox.
+
+**Base OFT peer check** (Base mainnet RPC):
+
+```
+eth_call 0x834df4C1d8f51Be24322E39e4766697BE015512F  peers(uint32 30168)   // Solana mainnet EID
+→ 0xdf27232aeae2338ad9c7cf38c083de3d97869dc69b3d480a1dd73d1a2c05cbb5   (non-zero ⇒ peered)
+eth_call … token()  → 0x834d…512F (self ⇒ native OFT)   ;   symbol() → "CETES"
+eth_getCode (Base Sepolia) → 0x (no contract there)
+```

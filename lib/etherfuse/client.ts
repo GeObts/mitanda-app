@@ -189,9 +189,38 @@ export interface InitiateSwapResult {
 /** GET /ramp/me — verifies which org the key belongs to (key smoke test). */
 export const getOrgIdentity = () => request<OrgIdentity>("/ramp/me");
 
-/** GET /lookup/bonds/cost/{symbol} — live bond pricing + interest rate. Public. */
-export const getCetesRate = () =>
-  request<BondCost>("/lookup/bonds/cost/CETES", { auth: false });
+// Public Etherfuse lookup base. The SANDBOX (`api.sand.*`) reports a fixed/stale
+// CETES rate of 313 bps (3.13%) — it just mirrors the devnet mint's interest-bearing
+// extension (`currentRate: 313`). PRODUCTION's public lookup returns the real, live
+// rate (~558 bps = 5.58% as of 2026-06-06), matches devnet.etherfuse.com, and needs
+// NO API key. We source only the *displayed yield rate* from production; the swap +
+// quote stay on the sandbox. Override with ETHERFUSE_PUBLIC_BASE_URL.
+const PUBLIC_LOOKUP_BASE_URL =
+  process.env.ETHERFUSE_PUBLIC_BASE_URL || "https://api.etherfuse.com";
+
+/**
+ * GET /lookup/bonds/cost/CETES — live bond pricing + interest rate.
+ * Public (no key), read from PRODUCTION (see PUBLIC_LOOKUP_BASE_URL above), so it
+ * reflects the true live APY rather than the sandbox's stale 3.13%.
+ */
+export async function getCetesRate(): Promise<BondCost> {
+  let res: Response;
+  try {
+    res = await fetch(`${PUBLIC_LOOKUP_BASE_URL}/lookup/bonds/cost/CETES`, {
+      cache: "no-store",
+    });
+  } catch (e) {
+    throw new EtherfuseApiError(0, null, `Network error fetching CETES rate: ${String(e)}`);
+  }
+  if (!res.ok) {
+    throw new EtherfuseApiError(
+      res.status,
+      await res.text().catch(() => null),
+      `Etherfuse CETES rate lookup failed with ${res.status}`,
+    );
+  }
+  return (await res.json()) as BondCost;
+}
 
 /** GET /lookup/stablebonds — full stablebond list (price, supply per chain). Public. */
 export const getStablebonds = () =>
