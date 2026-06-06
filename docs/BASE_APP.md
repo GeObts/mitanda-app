@@ -105,7 +105,7 @@ manifest registration).
    Builder Rewards are paid).
 3. Fill in **all** metadata — Base uses these in the app store/discovery surfaces:
    - **Name:** Mi Tanda
-   - **Primary URL:** your Base build URL (e.g. `https://base.mitanda.app`) —
+   - **Primary URL:** your Base build URL (e.g. `https://base.mitanda.online`) —
      must match `NEXT_PUBLIC_APP_URL`.
    - **Icon:** 512×512 (use `public/mitanda-logo.png` or a dedicated icon).
    - **Tagline / subtitle, Description** (Spanish + English both read well).
@@ -140,7 +140,7 @@ touches your live web app.
    npm install            # picks up @base-org/account + @farcaster/miniapp-sdk
    npm run cf:deploy:base
    ```
-4. Point your domain (e.g. `base.mitanda.app`) at the `mitanda-base` Worker in
+4. Point your domain (e.g. `base.mitanda.online`) at the `mitanda-base` Worker in
    the Cloudflare dashboard (Workers → Custom Domains), matching
    `NEXT_PUBLIC_APP_URL`.
 
