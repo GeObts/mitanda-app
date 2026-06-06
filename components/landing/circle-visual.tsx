@@ -1,4 +1,7 @@
+"use client";
+
 import { Gift, Check } from "lucide-react";
+import { useT } from "@/lib/i18n";
 import { RotatingArrows } from "./rotating-arrows";
 
 /**
@@ -19,6 +22,7 @@ const MEMBERS = [
 ];
 
 export function CircleVisual({ className = "" }: { className?: string }) {
+  const t = useT();
   return (
     <div className={`relative ${className}`}>
       {/* Glow bloom behind the whole visual. */}
@@ -34,7 +38,7 @@ export function CircleVisual({ className = "" }: { className?: string }) {
           <div className="absolute inset-[32%] flex flex-col items-center justify-center rounded-full border border-white/70 bg-white/80 shadow-[0_10px_40px_-8px_rgba(0,0,255,0.45)] backdrop-blur-xl dark:border-white/15 dark:bg-white/10">
             <RotatingArrows className="mb-1 size-7 text-[#0000ff] dark:text-[#3c8aff]" />
             <span className="text-xl font-bold tracking-tight text-foreground">$3,000</span>
-            <span className="text-[0.7rem] font-medium text-foreground-muted">this round</span>
+            <span className="text-[0.7rem] font-medium text-foreground-muted">{t("land.vizThisRound")}</span>
           </div>
 
           {/* Members around the ring. */}
@@ -70,8 +74,8 @@ export function CircleVisual({ className = "" }: { className?: string }) {
 
       {/* Floating caption — teaches the rotation in one line. */}
       <div className="mt-float absolute -bottom-4 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full border border-white/70 bg-white/80 px-4 py-2 text-sm font-semibold shadow-[0_12px_30px_-10px_rgba(6,10,80,0.35)] backdrop-blur-xl dark:border-white/15 dark:bg-white/10">
-        <span className="text-[#0000ff] dark:text-[#3c8aff]">Round 3 of 6</span>
-        <span className="text-foreground-muted"> · Sofía&apos;s turn</span>
+        <span className="text-[#0000ff] dark:text-[#3c8aff]">{t("land.vizRound", { x: 3, n: 6 })}</span>
+        <span className="text-foreground-muted"> · {t("land.vizTurn", { name: "Sofía" })}</span>
       </div>
     </div>
   );

@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import type { ContractFunctionParameters } from "viem";
 import Image from "next/image";
 import { useAccount, useReadContract, useReadContracts, useSignMessage } from "wagmi";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { Loader2, Users, Clock, CheckCircle2, AlertTriangle, Wallet } from "lucide-react";
 
 import { HeaderCard } from "@/components/mt/header-card";

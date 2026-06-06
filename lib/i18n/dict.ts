@@ -438,8 +438,262 @@ export const dict = {
 
   // ── tx guard / cost ─────────────────────────────────────────────────────
   "guard.needBalance": { es: "Necesitas {req} {sym} (tienes {bal}).", en: "You need {req} {sym} (you have {bal})." },
-  "guard.faucet": { es: "Consigue USDC de prueba del faucet", en: "Get test USDC from the faucet" },
   "guard.approveAnd": { es: "Aprobar y {action}", en: "Approve & {action}" },
+
+  // ── landing / promo page ────────────────────────────────────────────────
+  "land.openApp": { es: "Abrir app", en: "Open app" },
+  "land.navHow": { es: "Cómo funciona", en: "How it works" },
+  "land.navSafe": { es: "Por qué es seguro", en: "Why it's safe" },
+  "land.navWho": { es: "Para quién es", en: "Who it's for" },
+
+  // hero
+  "land.heroTitle1": { es: "La tanda de toda la vida,", en: "The Tanda you've grown up with," },
+  "land.heroTitle2": { es: "nueva y mejorada.", en: "new and Improved." },
+  "land.heroSubhead": {
+    es: "Ahorra junto a tu grupo en privado, o únete a una tanda pública. Cada ronda todos aportan, y cada ronda una persona se lleva el bote completo — pagado de forma segura y protegida, automáticamente.",
+    en: "Save together in a private group, or join a public tanda. Everyone chips in each round, and each round one person takes home the whole pot — paid out safe, secure, automatically.",
+  },
+  "land.ctaStart": { es: "Inicia una tanda", en: "Start a tanda" },
+  "land.ctaJoin": { es: "Únete a un círculo", en: "Join a circle" },
+  "land.trustMade": { es: "Círculos de ahorro rotativos, hechos seguros", en: "Rotating savings circles, made safe" },
+  "land.trustNoOrg": { es: "Nadie guarda el dinero", en: "No organizer holds the money" },
+  "land.trustDeposit": { es: "Depósito reembolsable", en: "Refundable deposit" },
+  "land.trustVerifiable": { es: "Verificable públicamente", en: "Publicly verifiable" },
+
+  // what's a tanda
+  "land.watEyebrow": { es: "Una tradición, honrada", en: "A tradition, honored" },
+  "land.watTitle": { es: "¿Qué es una tanda?", en: "What's a tanda?" },
+  "land.watSubtitle": {
+    es: "Una tanda es un círculo de ahorro rotativo en el que familias y comunidades han confiado por generaciones. La idea es simple: ahorrar juntos, tomar turnos y ayudarse a alcanzar una meta más pronto.",
+    en: "A tanda is a rotating savings circle that families and communities have trusted for generations. The idea is simple: save together, take turns, and help each other reach a goal sooner.",
+  },
+  "land.watP1t": { es: "Todos aportan", en: "Everyone chips in" },
+  "land.watP1b": { es: "Un grupo acuerda un monto fijo y lo aporta cada ronda.", en: "A group agrees on a fixed amount and contributes it every round." },
+  "land.watP2t": { es: "Una persona se lleva el bote", en: "One person takes the pot" },
+  "land.watP2b": { es: "Cada ronda, el bote completo va para un solo miembro del círculo.", en: "Each round, the full pot goes to a single member of the circle." },
+  "land.watP3t": { es: "Rota hasta que todos cobran", en: "It rotates until all are paid" },
+  "land.watP3b": { es: "El turno avanza hasta que cada quien ha recibido una vez — y entonces termina.", en: "The turn passes along until everyone has received once — then it ends." },
+
+  // how it works
+  "land.howTitle": { es: "Cuatro pasos simples, de inicio a fin", en: "Four simple steps, start to finish" },
+  "land.howSubtitle": {
+    es: "El mismo ritmo de la tanda que ya conoces — con mayor comodidad y seguridad.",
+    en: "The same rhythm as the tanda you already know — with added convenience and security.",
+  },
+  "land.howS1t": { es: "Crea o únete a una tanda", en: "Create or join a tanda" },
+  "land.howS1b": {
+    es: "Inicia tu propio círculo o únete a uno. Hazlo público o mantenlo privado con un enlace de invitación para amigos y familia.",
+    en: "Start your own circle or join one. Make it public, or keep it private with an invite link for friends and family.",
+  },
+  "land.howS2t": { es: "Todos aportan USDC", en: "Everyone contributes USDC" },
+  "land.howS2b": {
+    es: "Cada ciclo, cada miembro aporta el mismo monto fijo. El contrato inteligente lo recauda y lo guarda — ningún organizador toca el dinero.",
+    en: "Each cycle, every member puts in the same fixed amount. The smart contract collects and holds it — no organizer touches the money.",
+  },
+  "land.howS3t": { es: "Un miembro recibe el bote completo", en: "One member gets the full pot" },
+  "land.howS3b": {
+    es: "Cada ciclo, el bote entero va para una persona del círculo. Puede ser para la renta, una meta o un imprevisto.",
+    en: "Each cycle, the entire pot goes to one person in the circle. It could be for rent, a goal, or a rainy day.",
+  },
+  "land.howS4t": { es: "Rota hasta que todos cobran", en: "Rotate until everyone is paid" },
+  "land.howS4b": {
+    es: "El pago pasa de miembro en miembro cada ciclo. Cuando todos han tenido su turno, la tanda se completa.",
+    en: "The payout passes from member to member each cycle. Once everyone has had a turn, the tanda completes.",
+  },
+
+  // why it's safe
+  "land.safeTitle": { es: "Diseñado para que los miembros honestos siempre estén protegidos", en: "Built so honest members are always protected" },
+  "land.safeSubtitle": {
+    es: "La confianza de una tanda, con protecciones que no dependen de que alguien cumpla su palabra.",
+    en: "The trust of a tanda, with guardrails that don't depend on anyone keeping their word.",
+  },
+  "land.safeC1t": { es: "Lo guarda el código, no una persona", en: "Held by code, not a person" },
+  "land.safeC1b": {
+    es: "El dinero se guarda y se libera automáticamente por código — así ningún organizador puede llevarse los fondos.",
+    en: "The money is held and released automatically by code — so no organizer can ever run off with the funds.",
+  },
+  "land.safeC2t": { es: "Protegido contra incumplimientos", en: "Protected against no-shows" },
+  "land.safeC2b": {
+    es: "Un pequeño depósito reembolsable cubre al círculo si alguien deja de pagar, así los miembros honestos siempre quedan completos.",
+    en: "A small refundable deposit covers the circle if someone stops paying, so honest members always stay whole.",
+  },
+  "land.safeC3t": { es: "Totalmente transparente", en: "Fully transparent" },
+  "land.safeC3b": {
+    es: "Cada aportación y cada pago es verificable públicamente — cualquiera de tu círculo puede revisarlo, cuando quiera.",
+    en: "Every contribution and every payout is publicly verifiable — anyone in your circle can check, anytime.",
+  },
+
+  // the trust problem, solved
+  "land.tsEyebrow": { es: "Confianza sin el riesgo", en: "Trust without the risk" },
+  "land.tsTitle": { es: "El problema de confianza, por fin resuelto", en: "The trust problem, finally solved" },
+  "land.tsSubtitle": {
+    es: "Las tandas siempre han funcionado con confianza — y a veces esa confianza se rompe. MiTanda conserva todo lo que amas de la tradición y elimina el único riesgo real.",
+    en: "Tandas have always run on trust — and sometimes that trust gets broken. MiTanda keeps everything you love about the tradition and removes the one real risk.",
+  },
+  "land.tsFearLabel": { es: "El miedo", en: "The fear" },
+  "land.tsFearQuote": {
+    es: "«¿Y si el organizador desaparece con el dinero?»",
+    en: "“What if the organizer disappears with the money?”",
+  },
+  "land.tsFearBody": {
+    es: "Con MiTanda, no pueden. No hay un organizador que guarde los fondos — lo hace el contrato inteligente, y solo puede seguir las reglas con las que fue programado. Hacer trampa es simplemente imposible.",
+    en: "With MiTanda, they can't. There's no organizer holding the funds — the smart contract does, and it can only follow the rules it has been programmed to. It's simply impossible to cheat.",
+  },
+  "land.tsC1t": { es: "Nadie puede huir con el bote", en: "No one can run off with the pot" },
+  "land.tsC1b": {
+    es: "El contrato inteligente guarda y mueve el dinero con reglas fijas. No hay una wallet de organizador que vaciar — el código, no una persona, controla el pago.",
+    en: "The smart contract holds and moves the money by fixed rules. There is no organizer wallet to drain — the code, not a person, controls the payout.",
+  },
+  "land.tsC2t": { es: "Transparente y verificable", en: "Transparent and verifiable" },
+  "land.tsC2b": {
+    es: "Cada aportación y cada pago queda registrado onchain. Cualquiera en el círculo puede comprobar que se siguen las reglas.",
+    en: "Every contribution and payout is recorded onchain. Anyone in the circle can check that the rules are being followed.",
+  },
+  "land.tsC3t": { es: "Tú mantienes el control de tus fondos", en: "You keep control of your funds" },
+  "land.tsC3b": {
+    es: "Tu dinero se queda bajo las reglas del contrato, no en la cuenta bancaria ni el bolsillo de alguien más.",
+    en: "Your money stays in the rules of the contract, not in someone else's bank account or pocket.",
+  },
+  "land.tsC4t": { es: "Construido en Arbitrum y Base", en: "Built on Arbitrum and Base" },
+  "land.tsC4b": {
+    es: "Funciona en Arbitrum y Base — redes de Ethereum rápidas y de bajo costo — y ahorras en pesos (MXNB) o dólares (USDC), dinero digital estable que mantiene su valor.",
+    en: "Runs on Arbitrum and Base — fast, low-cost Ethereum networks — and you save in pesos (MXNB) or dollars (USDC), stable digital money that holds its value.",
+  },
+  // built-in insurance
+  "land.insEyebrow": { es: "Seguro integrado", en: "Built-in insurance" },
+  "land.insTitle": { es: "Un regalo esperando en la meta", en: "A gift waiting at the finish line" },
+  "land.insBody": {
+    es: "Cada pago incluye una pequeña aportación de seguro del 10% adicional. Piénsalo como un fondo de ahorro dentro de tu fondo de ahorro — y cuando la tanda se completa, cada miembro recibe de vuelta todas sus aportaciones de seguro. Es una pequeña recompensa por terminar lo que empezaste, y una razón para seguir.",
+    en: "Every payment includes a small 10% insurance contribution on top. Think of it as a savings pot inside your savings pot — and when the tanda completes, every member gets all of their insurance payments back. It's a little reward for finishing what you started, and a reason to keep going.",
+  },
+  "land.insFinishT": { es: "Termina fuerte y recupéralo todo", en: "Finish strong, get it all back" },
+  "land.insFinishB": {
+    es: "Completa la tanda y tu saldo de seguro completo se te devuelve — motivación para quedarte hasta la última ronda.",
+    en: "Complete the tanda and your full insurance balance is returned to you — motivation to stay in until the very last round.",
+  },
+  "land.insDefaultT": { es: "Si abandonas, lo pierdes", en: "Default and you forfeit it" },
+  "land.insDefaultB": {
+    es: "Si un miembro deja de pagar, pierde todo lo que aportó — sus contribuciones y su seguro — así que quienes se quedan están protegidos.",
+    en: "If a member stops paying, they lose everything they've put in — their contributions and their insurance — so the people who stay are protected.",
+  },
+
+  // features
+  "land.featEyebrow": { es: "Funciones", en: "Features" },
+  "land.featTitle": { es: "Todo lo que una tanda moderna necesita", en: "Everything a modern tanda needs" },
+  "land.featSubtitle": {
+    es: "Familiar por diseño, con algunos detalles pensados para mantener tu círculo seguro y simple.",
+    en: "Familiar by design, with a few thoughtful touches to keep your circle safe and simple.",
+  },
+  "land.featB1t": { es: "Tandas públicas y privadas", en: "Public & private tandas" },
+  "land.featB1b": {
+    es: "Únete a un círculo abierto o crea una tanda privada, solo por invitación, para amigos y familia. Comparte un enlace y ya están dentro.",
+    en: "Join an open circle or spin up a private, invite-only tanda for friends and family. Share a link and they're in.",
+  },
+  "land.featB2t": { es: "Seguro integrado", en: "Built-in insurance" },
+  "land.featB2b": {
+    es: "Un fondo de protección ayuda a cubrir al grupo si un miembro deja de pagar, para que una aportación perdida no descarrile a todos.",
+    en: "A protection pool helps cover the group if a member stops paying, so one missed contribution doesn't derail everyone.",
+  },
+  "land.featB3t": { es: "Comisiones bajas y transparentes", en: "Low, transparent fees" },
+  "land.featB3b": {
+    es: "Las comisiones son pequeñas y se muestran por adelantado — sin sorpresas ni cobros ocultos.",
+    en: "Fees are small and shown up front — no surprises, no hidden cuts.",
+  },
+  "land.featB4t": { es: "Inicia sesión con correo o redes sociales", en: "Sign in with email or social" },
+  "land.featB4b": {
+    es: "Sin frase semilla, sin configurar wallet, sin experiencia en cripto. Si sabes usar una app de banco, sabes usar MiTanda.",
+    en: "No seed phrase, no wallet setup, no crypto experience required. If you can use a banking app, you can use MiTanda.",
+  },
+  "land.featB5t": { es: "Recibos onchain", en: "Onchain receipts" },
+  "land.featB5b": {
+    es: "Cada aportación y cada pago queda registrado, así siempre tienes comprobante.",
+    en: "Every contribution and payout is recorded, so you always have proof.",
+  },
+  "land.featB6t": { es: "Insignia de finalización", en: "Completion badge" },
+  "land.featB6b": {
+    es: "Termina una tanda y gana una insignia que construye tu reputación de ahorro con el tiempo.",
+    en: "Finish a tanda and earn a badge that builds your savings reputation over time.",
+  },
+  "land.featB7t": { es: "Todo desde tu teléfono", en: "All from your phone" },
+  "land.featB7b": {
+    es: "Se acabaron las vueltas cada semana y sacar tiempo de tu día solo para pagar. Aporta y cobra desde tu teléfono, en la comodidad de tu casa — y sin andar cargando un fajo de efectivo.",
+    en: "No more weekly trips across town or carving time out of a busy week just to pay. Contribute and collect right from your phone, in the comfort of home — and no walking around with a big chunk of cash.",
+  },
+  "land.featB8t": { es: "Gana el 3% como creador", en: "Earn 3% as a creator" },
+  "land.featB8b": {
+    es: "Crea una tanda y gana el 3% de cada pago — una recompensa por reunir a tu círculo y hacerlo crecer.",
+    en: "Create a tanda and earn 3% of every payout — a reward for bringing your circle together and growing it.",
+  },
+
+  // built for real money
+  "land.moneyEyebrow": { es: "Hecho para dinero real", en: "Built for real money" },
+  "land.moneyTitle": { es: "Fondos reales, ahorro real, pagos instantáneos", en: "Real Funds, Real Savings, Instant Payouts" },
+  "land.moneySubtitle": {
+    es: "Ahorra en la moneda que ya usas, y recibe tu bote en el momento en que es tu turno.",
+    en: "Save in the currency you already use, and get your pot the moment it's your turn.",
+  },
+  "land.moneyPesosTitle": { es: "Pesos digitales", en: "Digital pesos" },
+  "land.moneyPesosBody": {
+    es: "Ahorra en pesos con MXNB — el mismo valor que el efectivo que ya usas, listo para enviar y recibir.",
+    en: "Save in pesos with MXNB — the same value as the cash you already use, ready to send and receive.",
+  },
+  "land.moneyDollarsTitle": { es: "Dólares digitales", en: "Digital dollars" },
+  "land.moneyDollarsBody": {
+    es: "¿Prefieres dólares? Lleva tu círculo en USDC. Tu círculo, tu moneda — tú eliges.",
+    en: "Prefer dollars? Run your circle in USDC instead. Your circle, your currency — you choose.",
+  },
+  "land.moneyInstantTitle": { es: "Pagos instantáneos", en: "Instant payouts" },
+  "land.moneyInstantBody": {
+    es: "Cuando es tu turno, el bote completo llega de inmediato — sin esperas y sin perseguir a nadie.",
+    en: "When it's your turn, the full pot arrives right away — no waiting and no chasing anyone down.",
+  },
+  "land.moneyFeesTitle": { es: "Comisiones pequeñas y claras", en: "Small, clear fees" },
+  "land.moneyFeesBody": {
+    es: "Solo comisiones pequeñas y transparentes — mostradas por adelantado, sin nada oculto ni sorpresas.",
+    en: "Only small, transparent fees — shown to you up front, with nothing hidden and no surprises.",
+  },
+
+  // who it's for
+  "land.whoTitle": { es: "Para quién es", en: "Who it's for" },
+  "land.whoBody": {
+    es: "La tanda es para todos. Júntense para alcanzar sus metas. Ya sean un puñado de amigos cercanos o toda una comunidad, MiTanda funciona para cualquier grupo listo para ahorrar junto, con confianza.",
+    en: "The Tanda is for everyone. Pool together to reach your goals. Whether it's a handful of close friends or a whole community, Mi Tanda works for any group ready to save together with confidence.",
+  },
+  "land.whoChip1": { es: "Amigos", en: "Friends" },
+  "land.whoChip2": { es: "Familia", en: "Family" },
+  "land.whoChip3": { es: "Compañeros", en: "Coworkers" },
+  "land.whoChip4": { es: "Comunidades", en: "Communities" },
+
+  // final CTA
+  "land.finalTitle": {
+    es: "Ahorren juntos, como siempre lo han hecho — sin la preocupación",
+    en: "Save together, the way you always have — without the worry",
+  },
+  "land.finalBody": {
+    es: "Crea o únete a una tanda en minutos. La tradición sigue igual; la confianza ahora viene integrada.",
+    en: "Start or join a tanda in minutes. The tradition stays the same; the trust is now built in.",
+  },
+  "land.finalRewardLabel": { es: "Recompensa para creadores", en: "Creator reward" },
+  "land.finalReward": {
+    es: "Crea una tanda y gana el 3% de cada pago — tu recompensa por iniciar el círculo e invitar a tu gente.",
+    en: "Create a tanda and earn 3% of every payout — your reward for starting the circle and bringing your people in.",
+  },
+  "land.launchApp": { es: "Abrir app", en: "Launch app" },
+
+  // footer
+  "land.footFaq": { es: "Preguntas", en: "FAQ" },
+  "land.footContact": { es: "Contacto", en: "Contact" },
+  "land.footTagline": {
+    es: "La forma de siempre de ahorrar juntos — ahora resguardada por código.",
+    en: "The familiar way to save together — now held safely by code.",
+  },
+  "land.footCopyright": { es: "© {year} MiTanda. Ahorra junto, con seguridad.", en: "© {year} MiTanda. Save together, safely." },
+  "land.footPowered": { es: "Impulsado por Arbitrum y Base, con MXNB de Bitso", en: "Powered by Arbitrum & Base, with Bitso's MXNB" },
+
+  // hero illustration labels
+  "land.vizThisRound": { es: "esta ronda", en: "this round" },
+  "land.vizRound": { es: "Ronda {x} de {n}", en: "Round {x} of {n}" },
+  "land.vizTurn": { es: "turno de {name}", en: "{name}'s turn" },
 } as const;
 
 export type TKey = keyof typeof dict;

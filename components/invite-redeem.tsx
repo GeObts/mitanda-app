@@ -102,7 +102,9 @@ export function InviteRedeem({ payload }: { payload: InvitePayload }) {
 
   const perCycle = terms ? perCycleCharge(terms.contribution) : 0n;
   const slotsRemaining = terms ? terms.participantCount - terms.activeCount : 0;
-  const nowSec = Math.floor(Date.now() / 1000);
+  // Snapshot "now" once on mount — calling Date.now() directly in render is
+  // impure. A frozen mount timestamp is fine for this short-lived redeem screen.
+  const [nowSec] = useState(() => Math.floor(Date.now() / 1000));
   const expired = nowSec > Number(deadline);
   const wrongWallet =
     !!address && address.toLowerCase() !== invitee.toLowerCase();

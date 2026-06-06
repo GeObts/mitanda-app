@@ -12,10 +12,10 @@ import type { MetadataRoute } from "next";
  */
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Mi Tanda",
-    short_name: "Mi Tanda",
+    name: "MiTanda",
+    short_name: "MiTanda",
     description:
-      "Save together. On-chain rotating savings circles (tandas) — create or join a circle, pay each cycle, and receive your payout.",
+      "Save together. Onchain rotating savings circles (tandas) — create or join a circle, pay each cycle, and receive your payout.",
     start_url: "/",
     scope: "/",
     display: "standalone",

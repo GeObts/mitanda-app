@@ -1,18 +1,13 @@
 "use client";
 
 import { useCallback, useEffect, useMemo } from "react";
-import {
-  useAccount,
-  useChainId,
-  useSwitchChain,
-  useWriteContract,
-  useWaitForTransactionReceipt,
-} from "wagmi";
+import { useWriteContract, useWaitForTransactionReceipt } from "wagmi";
 import { useQueryClient } from "@tanstack/react-query";
 
 import { activeChain, tandaContract } from "@/lib/contracts";
 import { BUILDER_DATA_SUFFIX } from "@/lib/app-mode";
 import { describeTxError } from "@/lib/tx-error";
+import { useEnsureChain } from "@/lib/hooks/use-ensure-chain";
 
 export type WithdrawStatus = "idle" | "signing" | "pending" | "success" | "error";
 
@@ -22,9 +17,14 @@ export type WithdrawStatus = "idle" | "signing" | "pending" | "success" | "error
  * creator's 3% fee, insurance refunds) to their wallet. No approval needed.
  */
 export function useWithdraw(tandaAddress: `0x${string}`) {
-  const { isConnected } = useAccount();
-  const chainId = useChainId();
-  const { switchChain, isPending: isSwitching } = useSwitchChain();
+  const {
+    ensureChain,
+    switchToActiveChain,
+    isWrongNetwork,
+    isSwitching,
+    switchError,
+    resetSwitch,
+  } = useEnsureChain();
   const queryClient = useQueryClient();
 
   const {
@@ -32,7 +32,7 @@ export function useWithdraw(tandaAddress: `0x${string}`) {
     data: hash,
     isPending: isSigning,
     error: writeError,
-    reset,
+    reset: resetWrite,
   } = useWriteContract();
   const {
     isLoading: isConfirming,
@@ -40,21 +40,22 @@ export function useWithdraw(tandaAddress: `0x${string}`) {
     error: receiptError,
   } = useWaitForTransactionReceipt({ hash });
 
-  const isWrongNetwork = isConnected && chainId !== activeChain.id;
-
-  const claim = useCallback(() => {
+  // Auto-switch to the active chain first, then claim. A declined switch
+  // surfaces via switchError instead of a hard write error.
+  const claim = useCallback(async () => {
+    if (!(await ensureChain())) return;
     writeContract({
       ...tandaContract(tandaAddress),
       functionName: "withdraw",
       chainId: activeChain.id,
       dataSuffix: BUILDER_DATA_SUFFIX,
     });
-  }, [writeContract, tandaAddress]);
+  }, [ensureChain, writeContract, tandaAddress]);
 
-  const switchToActiveChain = useCallback(
-    () => switchChain({ chainId: activeChain.id }),
-    [switchChain],
-  );
+  const reset = useCallback(() => {
+    resetWrite();
+    resetSwitch();
+  }, [resetWrite, resetSwitch]);
 
   // On success, refetch app reads so the claimable balance refreshes to zero.
   useEffect(() => {
@@ -62,7 +63,7 @@ export function useWithdraw(tandaAddress: `0x${string}`) {
   }, [isSuccess, queryClient]);
 
   const status: WithdrawStatus =
-    writeError || receiptError
+    writeError || receiptError || switchError
       ? "error"
       : isSuccess
         ? "success"
@@ -73,10 +74,11 @@ export function useWithdraw(tandaAddress: `0x${string}`) {
             : "idle";
 
   const error = useMemo(() => {
+    if (switchError) return describeTxError(switchError);
     if (writeError) return describeTxError(writeError);
     if (receiptError) return describeTxError(receiptError);
     return null;
-  }, [writeError, receiptError]);
+  }, [switchError, writeError, receiptError]);
 
   return {
     claim,

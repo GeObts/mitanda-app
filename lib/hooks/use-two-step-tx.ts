@@ -3,9 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   useAccount,
-  useChainId,
   useReadContract,
-  useSwitchChain,
   useWaitForTransactionReceipt,
   useWriteContract,
 } from "wagmi";
@@ -14,6 +12,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { activeChain, erc20, mitanda } from "@/lib/contracts";
 import { BUILDER_DATA_SUFFIX } from "@/lib/app-mode";
 import { describeTxError } from "@/lib/tx-error";
+import { useEnsureChain } from "@/lib/hooks/use-ensure-chain";
 
 export interface ActionConfig {
   address: `0x${string}`;
@@ -52,9 +51,15 @@ interface Params {
  * allowance/balance/approve all run against `token` (defaults to USDC).
  */
 export function useTwoStepTx({ spender, requiredAmount, token, action }: Params) {
-  const { address, isConnected } = useAccount();
-  const chainId = useChainId();
-  const { switchChain, isPending: isSwitching } = useSwitchChain();
+  const { address } = useAccount();
+  const {
+    ensureChain,
+    switchToActiveChain,
+    isWrongNetwork,
+    isSwitching,
+    switchError,
+    resetSwitch,
+  } = useEnsureChain();
   const queryClient = useQueryClient();
 
   // The contribution token (per-tanda token, or USDC fallback).
@@ -85,7 +90,6 @@ export function useTwoStepTx({ spender, requiredAmount, token, action }: Params)
     allowanceVal !== null && allowanceVal < requiredAmount;
   const hasEnoughBalance =
     balanceVal !== null && balanceVal >= requiredAmount;
-  const isWrongNetwork = isConnected && chainId !== activeChain.id;
 
   // ── Tx machinery ───────────────────────────────────────────────────────────
   type Flow = "idle" | "approving" | "acting" | "done" | "error";
@@ -111,10 +115,12 @@ export function useTwoStepTx({ spender, requiredAmount, token, action }: Params)
     } as never);
   }, [action, act]);
 
-  const run = useCallback(() => {
+  // Auto-switch to the active chain first, then approve/act. A declined switch
+  // surfaces via switchError instead of a hard write error.
+  const run = useCallback(async () => {
     if (!action || !spender) return;
-    if (isWrongNetwork) return;
     if (!hasEnoughBalance) return;
+    if (!(await ensureChain())) return;
     actionFiredRef.current = false;
     if (needsApproval) {
       setFlow("approving");
@@ -131,7 +137,7 @@ export function useTwoStepTx({ spender, requiredAmount, token, action }: Params)
   }, [
     action,
     spender,
-    isWrongNetwork,
+    ensureChain,
     hasEnoughBalance,
     needsApproval,
     approve,
@@ -152,43 +158,36 @@ export function useTwoStepTx({ spender, requiredAmount, token, action }: Params)
     }
   }, [flow, approveReceipt.isSuccess, refetchAllowance, fireAction]);
 
-  // Action confirmed → success + refetch app reads.
+  // Action confirmed → refetch app reads (success is derived in `status`).
   useEffect(() => {
     if (flow === "acting" && actReceipt.isSuccess) {
-      setFlow("done");
       queryClient.invalidateQueries();
     }
   }, [flow, actReceipt.isSuccess, queryClient]);
 
-  // Any error bubbles the flow to error; track which phase failed.
+  // Error: which phase failed. `status` derives "error" from errorObj directly,
+  // so no effect is needed to transition the flow.
   const approveErr = approve.error || approveReceipt.error;
   const actErr = act.error || actReceipt.error;
-  const errorObj = approveErr || actErr;
+  const errorObj = switchError || approveErr || actErr;
   const errorPhase: "approve" | "action" | null = approveErr
     ? "approve"
     : actErr
       ? "action"
       : null;
-  useEffect(() => {
-    if (errorObj && flow !== "error") setFlow("error");
-  }, [errorObj, flow]);
 
   const reset = useCallback(() => {
     actionFiredRef.current = false;
     setFlow("idle");
     approve.reset();
     act.reset();
-  }, [approve, act]);
-
-  const switchToActiveChain = useCallback(
-    () => switchChain({ chainId: activeChain.id }),
-    [switchChain],
-  );
+    resetSwitch();
+  }, [approve, act, resetSwitch]);
 
   // ── Derived status ──────────────────────────────────────────────────────────
   const status: TwoStepStatus = useMemo(() => {
-    if (flow === "error" || errorObj) return "error";
-    if (flow === "done") return "success";
+    if (errorObj) return "error";
+    if (actReceipt.isSuccess) return "success";
     if (flow === "acting") {
       if (act.isPending) return "action-sign";
       if (act.data && actReceipt.isLoading) return "action-pending";
@@ -204,6 +203,7 @@ export function useTwoStepTx({ spender, requiredAmount, token, action }: Params)
     act.isPending,
     act.data,
     actReceipt.isLoading,
+    actReceipt.isSuccess,
     approve.isPending,
     approve.data,
     approveReceipt.isLoading,

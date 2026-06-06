@@ -18,6 +18,9 @@ export default function InvitePage() {
     undefined,
   );
   useEffect(() => {
+    // Client-only: window.location.search is unavailable during SSR, so read it
+    // on mount. One-shot transition (undefined → value), not a cascading loop.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setPayload(decodeInviteParams(new URLSearchParams(window.location.search)));
   }, []);
 
