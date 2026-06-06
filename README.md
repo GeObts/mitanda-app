@@ -32,7 +32,7 @@ flowchart TD
     User([User])
 
     User --> Web["mitanda.online<br/>Web app · Privy login"]
-    User --> BaseApp["base.mitanda.online<br/>Base App · Base Account"]
+    User --> BaseApp["base.mitanda.online (beta)<br/>Base App · Base Account"]
 
     Web --> SDK["wagmi + viem"]
     BaseApp --> SDK
@@ -61,7 +61,7 @@ flowchart TD
 ## Live URLs
 
 - **Web app:** [mitanda.online](https://mitanda.online) — Arbitrum One, Privy login.
-- **Base App:** [base.mitanda.online](https://base.mitanda.online) — Base mainnet, Base Account auth (deploy in progress).
+- **Base App:** [base.mitanda.online](https://base.mitanda.online) — Base mainnet, Base Account auth · **Beta** (mobile experience in active development).
 
 ---
 
