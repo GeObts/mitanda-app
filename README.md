@@ -159,5 +159,4 @@ The Base App build + deploy runbook is in [`docs/BASE_APP.md`](./docs/BASE_APP.m
 
 ## Team
 
-<!-- TODO: fill in team members, roles, and contact/links before submission. -->
-_TODO — add team members and roles._
+**Goyabean** — solo builder (product, smart contracts, and frontend), built with Claude Code.
