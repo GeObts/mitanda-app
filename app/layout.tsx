@@ -57,7 +57,10 @@ export const metadata: Metadata = {
     description: DESCRIPTION,
     images: [OG_IMAGE],
   },
-  other: embedTags(),
+  // `google: notranslate` → <meta name="google" content="notranslate" />.
+  // Stops browser auto-translation (esp. mobile Chrome), which rewrites brand
+  // terms like "tanda" and corrupts React's DOM, crashing wallet-connect/create.
+  other: { ...embedTags(), google: "notranslate" },
 };
 
 export default function RootLayout({
@@ -68,8 +71,9 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      translate="no"
       suppressHydrationWarning
-      className={`${GeistSans.variable} ${GeistMono.variable} h-full antialiased`}
+      className={`notranslate ${GeistSans.variable} ${GeistMono.variable} h-full antialiased`}
     >
       <head>
         {/* Apply the saved (or system) theme before paint to avoid a flash. */}
