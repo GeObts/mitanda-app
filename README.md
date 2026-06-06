@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="public/mitanda-mark.png" alt="Mi Tanda logo" width="140" />
+</p>
+
 # Mi Tanda
 
 **Mi Tanda is an on-chain ROSCA** (a *tanda* / *cundina* — rotating savings club).
