@@ -624,6 +624,11 @@ export const dict = {
     es: "Crea una tanda y gana el 3% de cada pago — una recompensa por reunir a tu círculo y hacerlo crecer.",
     en: "Create a tanda and earn 3% of every payout — a reward for bringing your circle together and growing it.",
   },
+  "land.featB9t": { es: "Genera rendimientos mientras ahorras", en: "Earn yield while you save" },
+  "land.featB9b": {
+    es: "Tu depósito de seguridad del 10% genera ~5.8% APY vía Etherfuse CETES (bonos del gobierno mexicano) en lugar de quedarse inactivo. Al completarse: reembolso completo más rendimientos acumulados.",
+    en: "Your 10% safety deposit earns ~5.8% APY via Etherfuse CETES (Mexican government bonds) instead of sitting idle. At completion: full refund plus accrued yield.",
+  },
 
   // built for real money
   "land.moneyEyebrow": { es: "Hecho para dinero real", en: "Built for real money" },

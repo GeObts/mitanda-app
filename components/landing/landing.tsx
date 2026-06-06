@@ -9,6 +9,7 @@ import {
   Eye,
   KeyRound,
   Coins,
+  TrendingUp,
   Gift,
   Trophy,
   TriangleAlert,
@@ -493,17 +494,18 @@ function CurrencyCard({
 
 function Features() {
   const t = useT();
-  // Bento layout on md+ (6-col grid): two wide/narrow rows (4+2, 2+4) followed
-  // by two even rows of halves (3+3, 3+3).
+  // Bento layout on md+ (6-col grid): two wide/narrow rows (4+2, 2+4), a row of
+  // thirds (2+2+2), then a row of halves (3+3).
   const boxes = [
     { icon: <Share2 className="size-7" />, title: t("land.featB1t"), body: t("land.featB1b"), span: "md:col-span-4" },
     { icon: <ShieldCheck className="size-7" />, title: t("land.featB2t"), body: t("land.featB2b"), span: "md:col-span-2" },
     { icon: <BadgePercent className="size-7" />, title: t("land.featB3t"), body: t("land.featB3b"), span: "md:col-span-2" },
     { icon: <Mail className="size-7" />, title: t("land.featB4t"), body: t("land.featB4b"), span: "md:col-span-4" },
-    { icon: <Smartphone className="size-7" />, title: t("land.featB7t"), body: t("land.featB7b"), span: "md:col-span-3" },
-    { icon: <Coins className="size-7" />, title: t("land.featB8t"), body: t("land.featB8b"), span: "md:col-span-3" },
-    { icon: <ReceiptText className="size-7" />, title: t("land.featB5t"), body: t("land.featB5b"), span: "md:col-span-3" },
+    { icon: <Smartphone className="size-7" />, title: t("land.featB7t"), body: t("land.featB7b"), span: "md:col-span-2" },
+    { icon: <Coins className="size-7" />, title: t("land.featB8t"), body: t("land.featB8b"), span: "md:col-span-2" },
+    { icon: <ReceiptText className="size-7" />, title: t("land.featB5t"), body: t("land.featB5b"), span: "md:col-span-2" },
     { icon: <Award className="size-7" />, title: t("land.featB6t"), body: t("land.featB6b"), span: "md:col-span-3" },
+    { icon: <TrendingUp className="size-7" />, title: t("land.featB9t"), body: t("land.featB9b"), span: "md:col-span-3" },
   ];
   return (
     <Section id="features">
