@@ -21,6 +21,28 @@ people already understand (the Mexican-peso stablecoin **MXNB**, or USDC).
 
 ---
 
+## Architecture
+
+```mermaid
+flowchart TD
+    User([User])
+
+    User --> Web["mitanda.online<br/>Web app · Privy login"]
+    User --> BaseApp["base.mitanda.online<br/>Base App · Base Account"]
+
+    Web --> SDK["wagmi + viem"]
+    BaseApp --> SDK
+
+    SDK --> Manager["TandaManager<br/>Arbitrum One + Base mainnet"]
+
+    Manager --> Clones["Tanda clones<br/>one ROSCA each"]
+    Manager --> NFTs["Pass / Receipt / Completion NFTs"]
+    Manager --> VRF["Chainlink VRF v2.5<br/>random payout order"]
+    Manager --> Insurance["Insurance Pool<br/>Etherfuse CETES yield"]
+```
+
+---
+
 ## Sponsor integrations
 
 | Sponsor | How Mi Tanda uses it |
