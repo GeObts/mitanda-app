@@ -78,9 +78,6 @@ export function MemberRoom({ detail }: { detail: TandaDetail }) {
   const { tandas } = useUserTandas();
   const viewer = tandas.find((t) => t.id === detail.id);
 
-  // Token metadata for the Etherfuse yield panel (decimals/symbol).
-  const { token } = useToken(detail.tokenAddress);
-
   return (
     <div className="space-y-6">
       <RoomHeader detail={detail} />
@@ -101,16 +98,7 @@ export function MemberRoom({ detail }: { detail: TandaDetail }) {
         <PaymentGrid detail={detail} />
       </div>
 
-      {detail.address && (
-        <YieldSection
-          tandaAddress={detail.address}
-          contributionAmount={detail.contributionAmount}
-          participantCount={detail.participantCount}
-          totalCycles={detail.totalCycles}
-          tokenDecimals={token?.decimals ?? 6}
-          tokenSymbol={token?.symbol ?? ""}
-        />
-      )}
+      <YieldSection />
 
       <ChatStub />
     </div>

@@ -698,34 +698,18 @@ export const dict = {
   // ── yield / Etherfuse (CETES) ─────────────────────────────────────────────
   "yield.eyebrow": { es: "Con tecnología de Etherfuse", en: "Powered by Etherfuse" },
   "yield.title": {
-    es: "Pon a trabajar el fondo de seguro",
-    en: "Put the insurance pool to work",
+    es: "Rendimiento del fondo de seguro",
+    en: "Insurance pool yield",
   },
-  "yield.headline": {
-    es: "Tu fondo de seguro podría ganar {apy}% anual en CETES vía Etherfuse",
-    en: "Your insurance pool could earn {apy}% APY in CETES via Etherfuse",
+  "yield.depositLine": {
+    es: "Tu depósito de seguridad del 10% genera ~{apy}% anual vía CETES de Etherfuse (bonos del gobierno mexicano).",
+    en: "Your 10% safety deposit is earning ~{apy}% APY via Etherfuse CETES (Mexican government bonds).",
   },
-  "yield.body": {
-    es: "Mientras la tanda avanza, el fondo de seguro está inactivo. Convertido a CETES (bonos del tesoro mexicano tokenizados) genera rendimiento real hasta que se reembolsa al completar la tanda.",
-    en: "While the tanda runs, the insurance pool sits idle. Parked in CETES (tokenized Mexican treasury bills) it earns real yield until it's refunded when the tanda completes.",
+  "yield.atCompletion": { es: "Al completar", en: "At completion" },
+  "yield.refundYield": {
+    es: "reembolso completo + rendimiento",
+    en: "full refund + yield",
   },
-  "yield.poolLabel": { es: "Fondo de seguro", en: "Insurance pool" },
-  "yield.apyLabel": { es: "Rendimiento CETES (en vivo)", en: "CETES APY (live)" },
-  "yield.projectedLabel": { es: "Rendimiento proyectado / año", en: "Projected yield / year" },
-  "yield.projectedNote": {
-    es: "Estimado sobre el fondo actual a {apy}% anual",
-    en: "Estimated on the current pool at {apy}% APY",
-  },
-  "yield.rateLoading": { es: "Cargando tasa en vivo…", en: "Loading live rate…" },
-  "yield.rateError": {
-    es: "No se pudo cargar la tasa de CETES en vivo.",
-    en: "Couldn't load the live CETES rate.",
-  },
-  "yield.cetesName": {
-    es: "CETES — bonos del tesoro mexicano",
-    en: "CETES — Mexican treasury bills",
-  },
-  "yield.asOf": { es: "al {time}", en: "as of {time}" },
 
   // swap widget
   "yield.swapTitle": { es: "Swap en vivo (demo)", en: "Live swap (demo)" },
