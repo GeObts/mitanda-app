@@ -1,0 +1,74 @@
+name: AtlasPool Coinbase Verification
+
+# Publicly reproducible verification that pool.basedmining.xyz pays the
+# connecting miner's address in the block coinbase. Runs the third-party
+# atlaspool_tools/verify_pool.py against our pool from GitHub's runners,
+# which (unlike the dev sandbox) have outbound access to stratum ports.
+#
+# The tool is read-only: it connects as a worker, subscribes, authorizes,
+# and parses the coinbase outputs. It is pinned to an audited commit.
+
+on:
+  push:
+    branches:
+      - claude/atlaspool-verification-results-QxQox
+    paths:
+      - .github/workflows/pool-verification.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    env:
+      POOL: pool.basedmining.xyz
+      # Pinned audited commit of atlaspool/atlaspool_tools
+      TOOLS_COMMIT: 7a95172
+      OP_WALLET: bc1qfkxva97ztlwjysqrhhnf6uuu8x6lpxr7eecv5e
+      MINER_WALLET: bc1qk3ghn6fhcy2zg4rfkgk427q47rvth32kyc5tmg
+    steps:
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Clone atlaspool_tools (pinned)
+        run: |
+          git clone https://github.com/atlaspool/atlaspool_tools.git
+          cd atlaspool_tools
+          git checkout "$TOOLS_COMMIT"
+          echo "Pinned to:"; git log --oneline -1
+
+      - name: 1) Pool operator wallet on port 3333
+        if: always()
+        working-directory: atlaspool_tools
+        run: |
+          echo "::group::verify_pool.py $POOL 3333 $OP_WALLET"
+          python3 verify_pool.py "$POOL" 3333 "$OP_WALLET"; echo "EXIT=$?"
+          echo "::endgroup::"
+
+      - name: 2) Active miner wallet on port 3333
+        if: always()
+        working-directory: atlaspool_tools
+        run: |
+          echo "::group::verify_pool.py $POOL 3333 $MINER_WALLET"
+          python3 verify_pool.py "$POOL" 3333 "$MINER_WALLET"; echo "EXIT=$?"
+          echo "::endgroup::"
+
+      - name: 3) All 5 address types on port 3333
+        if: always()
+        working-directory: atlaspool_tools
+        run: |
+          echo "::group::verify_pool.py $POOL 3333 -a"
+          python3 verify_pool.py "$POOL" 3333 -a; echo "EXIT=$?"
+          echo "::endgroup::"
+
+      - name: 4) High-diff port 3336 (operator wallet)
+        if: always()
+        working-directory: atlaspool_tools
+        run: |
+          echo "::group::verify_pool.py $POOL 3336 $OP_WALLET"
+          python3 verify_pool.py "$POOL" 3336 "$OP_WALLET"; echo "EXIT=$?"
+          echo "::endgroup::"
